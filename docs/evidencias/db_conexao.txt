@@ -1,0 +1,24 @@
+$ curl http://localhost:5000/api/health
+{
+    "arquivo": "eduvance.db",
+    "banco": "SQLite",
+    "status": "ok",
+    "tabelas": 27,
+    "usuarios": 120,
+    "versao": "3.45.1"
+}
+
+$ sqlite3 database/eduvance.db ".tables"
+aluno aluno_responsavel atividade avaliacao comunicado conteudo coordenador disciplina entrega_atividade evento forum frequencia horario material mensalidade nota ocorrencia post_forum professor recomendacao_ia redacao responsavel resultado_simulado simulado turma turma_disciplina usuario
+
+$ SELECT perfil, COUNT(*) FROM usuario GROUP BY perfil;
+ALUNO        111
+PROFESSOR    5
+RESPONSAVEL  2
+COORDENADOR  1
+ADMIN        1
+
+$ SELECT id_usuario, email, perfil, substr(senha_hash,1,40)||"..." FROM usuario LIMIT 3;  -- senhas armazenadas apenas como hash
+(1, 'admin@eduvance.com', 'ADMIN', 'pbkdf2:sha256:260000$wIXfDmwJ1NsMQmnm$3b...')
+(2, 'paula@eduvance.com', 'COORDENADOR', 'pbkdf2:sha256:260000$gHi9AK8TowJU54vI$d4...')
+(3, 'ricardo@eduvance.com', 'PROFESSOR', 'pbkdf2:sha256:260000$gHi9AK8TowJU54vI$d4...')

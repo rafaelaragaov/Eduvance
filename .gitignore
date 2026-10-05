@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node
+node_modules/
+frontend/dist/
+
+# Banco local (gerado por: python -m app.init_db)
+database/*.db
+database/*.db-journal
+
+# Ambiente / editor
+.env
+.DS_Store
+.vscode/
+.idea/
