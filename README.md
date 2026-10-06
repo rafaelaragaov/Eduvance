@@ -2,7 +2,7 @@
 
 Plataforma que centraliza informações acadêmicas, pedagógicas e administrativas entre escola, professores, alunos e responsáveis, com uma área de preparação para vestibulares.
 
-**Disciplina:** Fábrica de Software · **Turma:** 8NB · **Estado:** Sprint 03 — estrutura inicial funcionando
+**Disciplina:** Fábrica de Software · **Turma:** 8NB · **Estado:** Sprint 04 — primeiro módulo completo (Notas, Frequência e Boletim)
 
 | Camada | Tecnologia |
 |---|---|
@@ -19,6 +19,19 @@ Plataforma que centraliza informações acadêmicas, pedagógicas e administrati
 - ✅ **CRUD principal: Atividades** (cadastrar, consultar, atualizar, excluir) + entrega pelo aluno.
 - ✅ **Dashboards por perfil** conforme os protótipos (aluno, responsável, professor, coordenador, admin) e **Área de Vestibular**.
 - ✅ **Execução local** em um comando.
+
+## Sprint 04 — Módulo Notas, Frequência e Boletim (PB10, PB11, PB12)
+
+Fluxo completo e persistido no banco:
+
+1. **Professor** cadastra uma **avaliação** (prova, trabalho, teste ou projeto, com bimestre e peso) — menu *Avaliações*.
+2. **Lança as notas** de toda a turma de uma vez, com validação por aluno — menu *Lançar Notas*.
+3. **Registra a chamada** do dia, com acumulado de faltas e alerta de frequência abaixo de 75% — menu *Frequência*.
+4. **Aluno** e **responsável** (e coordenação/admin/professor, conforme o escopo) consultam o **boletim**: média ponderada por bimestre, média parcial, frequência e situação (Aprovado, Recuperação, Reprovado por faltas) — menu *Boletim*.
+
+Validações e regras: título/tipo/bimestre/peso/data (dentro do ano letivo) nas avaliações; título único por bimestre; nota de 0 a 10 (aceita vírgula); chamada só em dia útil, sem data futura e com todos os alunos da turma; avaliação com notas não pode ser excluída. Erros do servidor aparecem junto ao campo ou em mensagens claras na tela.
+
+> Atualizando da Sprint 03? Recrie o banco: `python -m app.init_db --reset` (a tabela `avaliacao` ganhou a coluna `peso`).
 
 ## Como executar localmente
 
@@ -75,7 +88,7 @@ cd backend && EDUVANCE_DEBUG=1 python run.py      # API com recarga automática
 ### Testes
 
 ```bash
-cd backend && python -m unittest discover -s tests -v    # 27 testes de integração (banco temporário)
+cd backend && python -m unittest discover -s tests -v    # 43 testes de integração (banco temporário)
 ```
 
 ## Controle de perfis
@@ -84,7 +97,10 @@ cd backend && python -m unittest discover -s tests -v    # 27 testes de integra�
 |---|:-:|:-:|:-:|:-:|:-:|
 | Cadastrar/editar/excluir usuários | todos os perfis | **somente professores** | — | — | — |
 | Atividades (CRUD) | todas | todas | **só das suas turmas** | consulta + marca entrega | consulta (aluno vinculado) |
+| Avaliações (CRUD) | ✔ | ✔ | só das suas turmas | — | — |
 | Lançar notas | ✔ | ✔ | só das suas turmas | — | — |
+| Registrar frequência | ✔ | ✔ | só das suas turmas | — | — |
+| Boletim completo | qualquer aluno | qualquer aluno | alunos das suas turmas | o próprio | apenas filhos vinculados |
 | Dashboard | geral | institucional | turmas/aulas | pessoal | alunos vinculados |
 | Área de Vestibular | — | — | — | ✔ | — |
 | Boletim/mensalidades de um aluno | ✔ | ✔ | alunos das suas turmas | o próprio | apenas filhos vinculados |
@@ -103,7 +119,13 @@ As regras são aplicadas **no servidor** (decorator `@auth_required(...)` + veri
 | GET/POST | `/api/atividades` | listar / cadastrar |
 | GET/PUT/DELETE | `/api/atividades/{id}` | consultar / atualizar / excluir |
 | PUT | `/api/atividades/{id}/entrega` | aluno marca entrega |
-| GET/PUT | `/api/notas/...` | lançamento de notas |
+| GET/POST | `/api/avaliacoes` | listar / cadastrar avaliações |
+| GET/PUT/DELETE | `/api/avaliacoes/{id}` | consultar / atualizar / excluir |
+| GET/PUT | `/api/notas/avaliacao/{id}` | notas da turma / gravar todas de uma vez (atômico) |
+| GET/PUT | `/api/frequencia` | chamada do dia / registrar chamada |
+| GET | `/api/boletim/{idAluno}` | boletim completo (por bimestre, média, frequência, situação) |
+| GET | `/api/catalogo/alunos` | alunos que o usuário pode consultar |
+| PUT | `/api/notas` | lançamento rápido de uma nota (dashboard do professor) |
 | GET | `/api/dashboard` | dashboard do perfil logado |
 | GET | `/api/alunos/{id}/resumo` | boletim, mensalidades e ocorrências |
 | GET/POST | `/api/vestibular` | simulados, redações, fórum, materiais |
@@ -112,7 +134,7 @@ As regras são aplicadas **no servidor** (decorator `@auth_required(...)` + veri
 
 ```
 backend/            API Flask (app/), testes (tests/), run.py
-  app/routes/       auth, usuarios, atividades, notas, dashboard, vestibular, catalogo
+  app/routes/       auth, usuarios, atividades, avaliacoes, notas, frequencia, boletim, dashboard, vestibular, catalogo
   app/services/     regras acadêmicas e de acesso
   app/seed.py       dados de demonstração
 frontend/           React + TypeScript (src/), build.mjs
@@ -122,7 +144,7 @@ docs/               relatório da Sprint 03 e evidências (capturas de tela)
 
 ## Roadmap
 
-Próximas Sprints: boletim completo, frequência, agenda e calendário, comunicados, ocorrências, mensalidades, notificações, chat professor/aluno, gabaritos e serviço de recomendação (Python/FastAPI) — itens PB10 a PB30 do backlog.
+Próximas Sprints: agenda e calendário, comunicados, ocorrências, mensalidades, notificações, chat professor/aluno, gabaritos e serviço de recomendação (Python/FastAPI) — itens PB13 a PB30 do backlog.
 
 ## Equipe
 

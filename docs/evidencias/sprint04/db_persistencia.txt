@@ -1,0 +1,22 @@
+Banco consultado DIRETAMENTE (sqlite3) depois do teste de ponta a ponta e de reiniciar o servidor.
+
+$ SELECT a.id_avaliacao, a.titulo, a.tipo, a.bimestre, a.data_avaliacao, a.peso, t.nome AS turma FROM avaliacao a JOIN turma_disciplina td USING(id_turma_disciplina) JOIN turma t ON t.id_turma=td.id_turma WHERE a.titulo LIKE 'Prova de Funções E2E%'
+id_avaliacao | titulo | tipo | bimestre | data_avaliacao | peso | turma
+55 | Prova de Funções E2E (rev.) | PROVA | 3 | 2026-10-20 | 2.0 | 8º Ano B
+
+$ SELECT u.nome, n.valor FROM nota n JOIN usuario u ON u.id_usuario=n.id_aluno JOIN avaliacao a USING(id_avaliacao) WHERE a.titulo LIKE 'Prova de Funções E2E%' ORDER BY u.nome
+nome | valor
+Ana Queiroz | 7.0
+Bruno Cardoso | 9.5
+Camila Oliveira | 8.5
+Daniel Almeida | 6.0
+
+$ SELECT f.data, SUM(f.presente) AS presentes, COUNT(*)-SUM(f.presente) AS faltas, COUNT(*) AS alunos FROM frequencia f JOIN turma_disciplina td USING(id_turma_disciplina) JOIN turma t ON t.id_turma=td.id_turma JOIN disciplina d ON d.id_disciplina=td.id_disciplina WHERE t.nome='8º Ano B' AND d.nome='Matemática' GROUP BY f.data ORDER BY f.data DESC LIMIT 3
+data | presentes | faltas | alunos
+2026-10-02 | 26 | 2 | 28
+2026-10-01 | 3 | 0 | 3
+2026-09-30 | 2 | 1 | 3
+
+$ SELECT (SELECT COUNT(*) FROM avaliacao) AS avaliacoes, (SELECT COUNT(*) FROM nota) AS notas, (SELECT COUNT(*) FROM frequencia) AS registros_frequencia
+avaliacoes | notas | registros_frequencia
+55 | 58 | 385
