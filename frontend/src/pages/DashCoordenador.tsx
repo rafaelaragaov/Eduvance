@@ -72,17 +72,17 @@ export default function DashCoordenador() {
                   {!d.eventos.length && <Empty>Nenhum evento futuro cadastrado.</Empty>}
                 </div>
               </Card>
-              <Card title="Notificações de Ocorrências">
+              <Card title="Notificações de Ocorrências" action={<Link to="/ocorrencias" className="card-link">Ver todas</Link>}>
                 <div className="list">
                   {d.ocorrencias.map((o) => (
-                    <div className="ocorrencia" key={o.id}>
+                    <Link to={`/ocorrencias/${o.id}`} className="ocorrencia" key={o.id}>
                       <Icon name="alert" size={18} />
                       <div>
                         <strong>{o.aluno}{o.turma ? ` (${o.turma.replace('º Ano ', 'º ')})` : ''}</strong>
                         <p>{o.titulo}</p>
                         <small>{quando(o.data)}</small>
                       </div>
-                    </div>
+                    </Link>
                   ))}
                   {!d.ocorrencias.length && <Empty>Nenhuma ocorrência em aberto.</Empty>}
                 </div>

@@ -296,3 +296,50 @@ textarea { resize: vertical; min-height: 84px; }
   .main { padding: 0; max-width: none; }
   .card { border: 0; padding: 0; }
 }
+
+/* ---------- Módulo Comunicação Escolar (Sprint 05) ---------- */
+.sino { position: relative; }
+.sino .icon-btn { position: relative; }
+.sino-badge { position: absolute; top: -5px; right: -5px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: var(--red); color: #fff; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; border: 2px solid #fff; }
+.sino-menu { position: absolute; right: 0; top: 48px; width: 340px; max-width: calc(100vw - 32px); background: #fff; border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 12px 32px rgba(10, 35, 40, 0.16); z-index: 50; overflow: hidden; }
+.sino-head { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+.sino-item { display: block; width: 100%; text-align: left; border: 0; border-bottom: 1px solid var(--line); background: #fff; padding: 10px 14px; cursor: pointer; font: inherit; }
+.sino-item:hover { background: #f4f9f9; }
+.sino-item.nova { background: #f1f8f8; border-left: 3px solid var(--primary); }
+.sino-item strong, .sino-item span { display: block; }
+.sino-item span { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+.sino-todas { display: block; text-align: center; padding: 10px; font-weight: 600; color: var(--primary); text-decoration: none; }
+.mobile-tools { display: inline-flex; gap: 8px; align-items: center; }
+.mobile-tools .sino-menu { position: fixed; top: 58px; right: 16px; }
+
+.com-lista { display: grid; gap: 14px; }
+.com-card header { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; margin-bottom: 6px; }
+.com-card h2 { margin: 0; font-size: 17px; }
+.com-card.nao-lido { border-left: 4px solid var(--primary); }
+.com-tags { display: inline-flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.com-msg { margin: 6px 0 12px; white-space: pre-wrap; line-height: 1.5; }
+.com-card footer { display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap; }
+.com-acoes { display: inline-flex; gap: 8px; flex-wrap: wrap; }
+textarea { width: 100%; font: inherit; padding: 10px 12px; border: 1px solid #cfdfe0; border-radius: 10px; resize: vertical; background: #fff; color: var(--text); }
+textarea:focus { outline: 2px solid var(--primary); outline-offset: 0; }
+.has-error textarea { border-color: var(--red); }
+
+.stat-btn { text-align: left; cursor: pointer; font: inherit; color: inherit; }
+.stat-btn.on { outline: 2px solid var(--primary); }
+a.ocorrencia { text-decoration: none; }
+a.ocorrencia:hover { filter: brightness(0.97); }
+.oc-top { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+.oc-top h3 { margin: 0 0 2px; }
+.oc-det h4 { margin: 14px 0 6px; }
+.timeline { list-style: none; margin: 0 0 12px; padding: 0 0 0 14px; border-left: 2px solid var(--line); }
+.timeline li { position: relative; padding: 0 0 10px 10px; }
+.timeline li::before { content: ''; position: absolute; left: -20px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); }
+.timeline p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+
+.notif-lista { display: grid; }
+.notif { display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--line); }
+.notif:last-child { border-bottom: 0; }
+.notif.nova { background: #f1f8f8; border-left: 3px solid var(--primary); }
+.notif-corpo { flex: 1; text-align: left; border: 0; background: none; padding: 12px 10px; cursor: pointer; font: inherit; display: grid; gap: 3px; color: inherit; }
+.notif-topo { display: flex; gap: 10px; align-items: center; }
+@media (max-width: 820px) { .page-header-tools .sino { display: none; } }

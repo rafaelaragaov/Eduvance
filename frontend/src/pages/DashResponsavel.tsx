@@ -81,7 +81,7 @@ export default function DashResponsavel() {
                         {!r.mensalidades.length && <Empty>Sem mensalidades registradas.</Empty>}
                       </div>
                     </Card>
-                    <Card title="Ocorrências Recentes">
+                    <Card title="Ocorrências Recentes" action={<Link to="/ocorrencias" className="card-link">Ver todas</Link>}>
                       <div className="list">
                         {r.ocorrencias.map((o) => (
                           <div className="ocorrencia" key={o.id} style={o.status === 'RESOLVIDA' ? { background: 'var(--gray-bg)', color: 'var(--gray)' } : undefined}>

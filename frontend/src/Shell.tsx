@@ -3,7 +3,7 @@ import { useAuth } from './auth';
 import { rotuloPerfil } from './format';
 import { Icon, IconName } from './icons';
 import { Link, navigate, usePath } from './router';
-import { Avatar, Logo } from './ui';
+import { Avatar, Logo, SinoNotificacoes } from './ui';
 import type { Perfil } from './types';
 
 export interface NavItem {
@@ -21,7 +21,8 @@ export const NAV: Record<Perfil, NavItem[]> = {
     { to: '/agenda', label: 'Agenda', icon: 'calendar', pb: 'PB13' },
     { to: '/atividades', label: 'Atividades', icon: 'file' },
     { to: '/provas', label: 'Provas', icon: 'bookmark', pb: 'PB16' },
-    { to: '/comunicados', label: 'Comunicados', icon: 'message', pb: 'PB18' },
+    { to: '/comunicados', label: 'Comunicados', icon: 'message' },
+    { to: '/ocorrencias', label: 'Ocorrências', icon: 'alert' },
     { to: '/vestibular', label: 'Vestibular', icon: 'award' },
   ],
   PROFESSOR: [
@@ -32,8 +33,8 @@ export const NAV: Record<Perfil, NavItem[]> = {
     { to: '/frequencia', label: 'Frequência', icon: 'checkCircle' },
     { to: '/atividades', label: 'Atividades', icon: 'file' },
     { to: '/boletim', label: 'Boletins', icon: 'book' },
-    { to: '/comunicados', label: 'Comunicados', icon: 'message', pb: 'PB18' },
-    { to: '/ocorrencias', label: 'Ocorrências', icon: 'alert', pb: 'PB19' },
+    { to: '/comunicados', label: 'Comunicados', icon: 'message' },
+    { to: '/ocorrencias', label: 'Ocorrências', icon: 'alert' },
   ],
   COORDENADOR: [
     { to: '/', label: 'Dashboard', icon: 'grid' },
@@ -44,7 +45,8 @@ export const NAV: Record<Perfil, NavItem[]> = {
     { to: '/frequencia', label: 'Frequência', icon: 'checkCircle' },
     { to: '/boletim', label: 'Boletins', icon: 'book' },
     { to: '/atividades', label: 'Atividades', icon: 'edit' },
-    { to: '/ocorrencias', label: 'Ocorrências', icon: 'alert', pb: 'PB19' },
+    { to: '/ocorrencias', label: 'Ocorrências', icon: 'alert' },
+    { to: '/comunicados', label: 'Comunicados', icon: 'message' },
     { to: '/horarios', label: 'Horários', icon: 'clock', pb: 'PB22' },
   ],
   RESPONSAVEL: [
@@ -53,8 +55,8 @@ export const NAV: Record<Perfil, NavItem[]> = {
     { to: '/mensalidades', label: 'Mensalidade', icon: 'card', pb: 'PB20' },
     { to: '/boletim', label: 'Boletim', icon: 'book' },
     { to: '/atividades', label: 'Atividades', icon: 'file' },
-    { to: '/ocorrencias', label: 'Ocorrências', icon: 'alert', pb: 'PB19' },
-    { to: '/comunicados', label: 'Comunicados', icon: 'message', pb: 'PB18' },
+    { to: '/ocorrencias', label: 'Ocorrências', icon: 'alert' },
+    { to: '/comunicados', label: 'Comunicados', icon: 'message' },
     { to: '/calendario', label: 'Calendário', icon: 'calendar', pb: 'PB17' },
   ],
   ADMIN: [
@@ -65,6 +67,8 @@ export const NAV: Record<Perfil, NavItem[]> = {
     { to: '/notas', label: 'Notas', icon: 'edit' },
     { to: '/frequencia', label: 'Frequência', icon: 'checkCircle' },
     { to: '/boletim', label: 'Boletins', icon: 'book' },
+    { to: '/comunicados', label: 'Comunicados', icon: 'message' },
+    { to: '/ocorrencias', label: 'Ocorrências', icon: 'alert' },
   ],
 };
 
@@ -126,7 +130,10 @@ export function Shell({ children }: { children: ReactNode }) {
       <div className="main-col">
         <div className="mobile-top">
           <Logo size={30} />
-          <button className="icon-btn" onClick={() => setMaisAberto(true)} aria-label="Menu"><Icon name="grid" size={18} /></button>
+          <span className="mobile-tools">
+            <SinoNotificacoes />
+            <button className="icon-btn" onClick={() => setMaisAberto(true)} aria-label="Menu"><Icon name="grid" size={18} /></button>
+          </span>
         </div>
         <main className="main">{children}</main>
       </div>

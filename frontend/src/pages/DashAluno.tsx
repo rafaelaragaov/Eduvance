@@ -82,7 +82,7 @@ export default function DashAluno() {
                 {!d.agendaHoje.length && <Empty>Sem aulas hoje.</Empty>}
               </Card>
 
-              <Card title="Comunicados Recentes">
+              <Card title="Comunicados Recentes" action={<Link to="/comunicados" className="card-link">Ver todos</Link>}>
                 <div className="list">
                   {d.comunicados.map((c) => {
                     const { dia, mes } = diaMesCurto(c.data);

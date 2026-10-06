@@ -7,6 +7,7 @@ import type { Perfil } from './types';
 import { Loading } from './ui';
 import Atividades from './pages/Atividades';
 import Boletim from './pages/Boletim';
+import Comunicados from './pages/Comunicados';
 import Frequencia from './pages/Frequencia';
 import Avaliacoes from './pages/Avaliacoes';
 import DashAdmin from './pages/DashAdmin';
@@ -16,6 +17,8 @@ import DashProfessor from './pages/DashProfessor';
 import DashResponsavel from './pages/DashResponsavel';
 import Login from './pages/Login';
 import Notas, { EscolherAvaliacao } from './pages/Notas';
+import Notificacoes from './pages/Notificacoes';
+import Ocorrencias from './pages/Ocorrencias';
 import Usuarios from './pages/Usuarios';
 import Vestibular from './pages/Vestibular';
 
@@ -52,6 +55,10 @@ const ROTAS: { path: string; perfis: Perfil[]; el: (p: Perfil, params: Record<st
   { path: '/boletim/:id', perfis: ['ADMIN', 'COORDENADOR', 'PROFESSOR', 'RESPONSAVEL'], el: (_p, r) => <Boletim id={Number(r.id)} /> },
   { path: '/notas', perfis: ['ADMIN', 'COORDENADOR', 'PROFESSOR'], el: () => <EscolherAvaliacao /> },
   { path: '/notas/:id', perfis: ['ADMIN', 'COORDENADOR', 'PROFESSOR'], el: (_p, r) => <Notas id={Number(r.id)} /> },
+  { path: '/comunicados', perfis: ['ADMIN', 'COORDENADOR', 'PROFESSOR', 'ALUNO', 'RESPONSAVEL'], el: () => <Comunicados /> },
+  { path: '/ocorrencias', perfis: ['ADMIN', 'COORDENADOR', 'PROFESSOR', 'ALUNO', 'RESPONSAVEL'], el: () => <Ocorrencias /> },
+  { path: '/ocorrencias/:id', perfis: ['ADMIN', 'COORDENADOR', 'PROFESSOR', 'ALUNO', 'RESPONSAVEL'], el: (_p, r) => <Ocorrencias id={Number(r.id)} /> },
+  { path: '/notificacoes', perfis: ['ADMIN', 'COORDENADOR', 'PROFESSOR', 'ALUNO', 'RESPONSAVEL'], el: () => <Notificacoes /> },
   { path: '/vestibular', perfis: ['ALUNO'], el: () => <Vestibular /> },
 ];
 
