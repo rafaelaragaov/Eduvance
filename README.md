@@ -126,4 +126,4 @@ Próximas Sprints: boletim completo, frequência, agenda e calendário, comunica
 
 ## Equipe
 
-Alexandre Rodrigues Aroeira Junior · Matheus Henrique da Costa Nascimento · Rafael Aragão Vieira · José Gabriel Rocha Barreto · Gabriel do Vale Alcoforado Braga
+Matheus Henrique da Costa Nascimento · Rafael Aragão Vieira · José Gabriel Rocha Barreto · Gabriel do Vale Alcoforado Braga

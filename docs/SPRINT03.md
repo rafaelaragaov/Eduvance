@@ -2,7 +2,7 @@
 
 **Projeto:** Sistema Integrado de Gestão e Acompanhamento Educacional — Eduvance
 **Grupo nº:** ___ · **Turma:** 8NB
-**Integrantes:** Alexandre Rodrigues Aroeira Junior · Matheus Henrique da Costa Nascimento · Rafael Aragão Vieira · José Gabriel Rocha Barreto · Gabriel do Vale Alcoforado Braga
+**Integrantes:** Matheus Henrique da Costa Nascimento · Rafael Aragão Vieira · José Gabriel Rocha Barreto · Gabriel do Vale Alcoforado Braga
 **Repositório:** https://github.com/rafaelaragaov/Eduvance
 
 > Rascunho do texto do relatório (seção da Sprint 03). As figuras estão em `docs/evidencias/`.
