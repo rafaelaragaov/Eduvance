@@ -90,7 +90,7 @@ def listar():
 def obter(id_):
     a = _por_id(id_)
     if not a:
-        raise nao_encontrado("Avaliação")
+        raise nao_encontrado("Avaliação", feminino=True)
     if not pode_gerir_turma_disciplina(g.user, a["idTurmaDisciplina"]):
         raise proibido()
     return jsonify(a)
@@ -114,7 +114,7 @@ def criar():
 def atualizar(id_):
     atual = _por_id(id_)
     if not atual:
-        raise nao_encontrado("Avaliação")
+        raise nao_encontrado("Avaliação", feminino=True)
     if not pode_gerir_turma_disciplina(g.user, atual["idTurmaDisciplina"]):
         raise proibido()
     d = _corpo(id_)
@@ -135,7 +135,7 @@ def atualizar(id_):
 def excluir(id_):
     atual = _por_id(id_)
     if not atual:
-        raise nao_encontrado("Avaliação")
+        raise nao_encontrado("Avaliação", feminino=True)
     if not pode_gerir_turma_disciplina(g.user, atual["idTurmaDisciplina"]):
         raise proibido()
     if atual["notasLancadas"]:

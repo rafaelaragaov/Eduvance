@@ -64,7 +64,7 @@ def _visivel(id_: int) -> dict:
     esc, p = _escopo(g.user)
     o = one(_BASE + f" WHERE o.id_ocorrencia = ? AND {esc}", (id_, *p))
     if not o:
-        raise nao_encontrado("Ocorrência")
+        raise nao_encontrado("Ocorrência", feminino=True)
     return _formatar(o, g.user)
 
 
@@ -164,7 +164,7 @@ def registrar():
         ).lastrowid
         con.execute("INSERT INTO ocorrencia_historico (id_ocorrencia, id_usuario, status_anterior, status_novo, comentario) VALUES (?,?,NULL,'ABERTA','Ocorrência registrada')",
                     (novo, u["id"]))
-        link = f"/ocorrencias?id={novo}"
+        link = f"/ocorrencias/{novo}"
         cm.notificar(cm.coordenadores(), "OCORRENCIA", f"Nova ocorrência: {aluno['nome']}", f"{d['titulo']} ({d['gravidade'].lower()}).", link, ignorar=u["id"], con=con)
         if d["gravidade"] in ("MEDIA", "GRAVE") or d["tipo"] == "ELOGIO":
             cm.notificar(cm.responsaveis_do_aluno(d["idAluno"]), "OCORRENCIA",
@@ -209,7 +209,7 @@ def alterar_status(id_):
         if novo == "RESOLVIDA":
             avisar += cm.responsaveis_do_aluno(atual["idAluno"])
         cm.notificar(avisar, "OCORRENCIA", f"Ocorrência {ROTULO_STATUS[novo].lower()}: {atual['aluno']}", atual["titulo"],
-                     f"/ocorrencias?id={id_}", ignorar=g.user["id"], con=con)
+                     f"/ocorrencias/{id_}", ignorar=g.user["id"], con=con)
     o = _visivel(id_)
     o["historico"] = _historico(id_)
     return jsonify(o)

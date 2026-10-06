@@ -232,10 +232,10 @@ def popular(con) -> None:
 
     # ---- notificações de demonstração (as demais são geradas pelo uso do sistema)
     for u, tipo, titulo, msg, link, lida in [
-        (paula, "OCORRENCIA", "Nova ocorrência: Lucas Silva", "Conversa Paralela em Sala (leve).", f"/ocorrencias?id={ocorrencias['conversa']}", 0),
-        (paula, "OCORRENCIA", "Nova ocorrência: Thiago Ramos", "Uso de celular em aula (media).", f"/ocorrencias?id={ocorrencias['celular']}", 0),
+        (paula, "OCORRENCIA", "Nova ocorrência: Lucas Silva", "Conversa Paralela em Sala (leve).", f"/ocorrencias/{ocorrencias['conversa']}", 0),
+        (paula, "OCORRENCIA", "Nova ocorrência: Thiago Ramos", "Uso de celular em aula (media).", f"/ocorrencias/{ocorrencias['celular']}", 0),
         (maria, "COMUNICADO", "Novo comunicado: Reunião de Pais e Mestres", "Publicado por Paula Ramos.", "/comunicados", 1),
-        (maria, "OCORRENCIA", "Elogio sobre Mariana Costa", "Destaque na Olimpíada de Matemática", f"/ocorrencias?id={ocorrencias['elogio']}", 0),
+        (maria, "OCORRENCIA", "Elogio sobre Mariana Costa", "Destaque na Olimpíada de Matemática", f"/ocorrencias/{ocorrencias['elogio']}", 0),
         (lucas, "COMUNICADO", "Novo comunicado: Prova de Matemática remarcada", "Publicado por Prof. Ricardo.", "/comunicados", 0),
         (prof["ricardo"], "COMUNICADO", "Novo comunicado: Planejamento do 4º bimestre", "Publicado por Paula Ramos.", "/comunicados", 0),
     ]:

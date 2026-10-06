@@ -14,8 +14,9 @@ class ApiError(Exception):
         self.detalhes = detalhes
 
 
-def nao_encontrado(o_que="Recurso") -> ApiError:
-    return ApiError(404, f"{o_que} não encontrado")
+def nao_encontrado(o_que="Recurso", feminino=False) -> ApiError:
+    """404 com concordância de gênero (\"Ocorrência não encontrada\", \"Aluno não encontrado\")."""
+    return ApiError(404, f"{o_que} não {'encontrada' if feminino else 'encontrado'}")
 
 
 def proibido(msg="Você não tem permissão para esta ação") -> ApiError:

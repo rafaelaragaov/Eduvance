@@ -11,7 +11,7 @@ bp = Blueprint("notificacoes", __name__, url_prefix="/api/notificacoes")
 def _minha(id_: int) -> dict:
     n = one("SELECT id_notificacao FROM notificacao WHERE id_notificacao = ? AND id_usuario = ?", (id_, g.user["id"]))
     if not n:
-        raise nao_encontrado("Notificação")
+        raise nao_encontrado("Notificação", feminino=True)
     return n
 
 

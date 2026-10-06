@@ -167,7 +167,7 @@ class TestOcorrencias(ComBase):
         self.assertEqual(self.notificacoes(paula)["naoLidas"], n_paula + 1)
         self.assertEqual(self.notificacoes(maria)["naoLidas"], n_maria + 1)
         self.assertTrue(any("Discussão" in n["mensagem"] for n in self.notificacoes(joao)["itens"]))
-        self.assertTrue(self.notificacoes(paula)["itens"][0]["link"].startswith("/ocorrencias?id="))
+        self.assertTrue(self.notificacoes(paula)["itens"][0]["link"].startswith("/ocorrencias/"))
 
         # coordenação analisa
         n_prof = self.notificacoes(ricardo)["naoLidas"]
@@ -277,6 +277,19 @@ class TestOcorrencias(ComBase):
         d = self.c.get("/api/dashboard", headers=paula).get_json()
         pendentes = sum(1 for o in self.c.get("/api/ocorrencias", headers=paula).get_json() if o["status"] != "RESOLVIDA")
         self.assertEqual(d["kpis"]["ocorrenciasAbertas"], pendentes)
+
+
+class TestMensagensDeErro(ComBase):
+    def test_nao_encontrado_concorda_com_o_genero(self):
+        paula = self.login("paula@eduvance.com")
+        for rota, esperado in (("/api/ocorrencias/99999", "Ocorrência não encontrada"), ("/api/avaliacoes/99999", "Avaliação não encontrada"),
+                               ("/api/atividades/99999", "Atividade não encontrada"), ("/api/comunicados/99999", "Comunicado não encontrado"),
+                               ("/api/boletim/99999", "Aluno não encontrado")):
+            r = self.c.get(rota, headers=paula)
+            self.assertEqual(r.status_code, 404, rota)
+            self.assertEqual(r.get_json()["erro"], esperado)
+        r = self.c.put("/api/notificacoes/99999/lida", headers=paula)
+        self.assertEqual(r.get_json()["erro"], "Notificação não encontrada")
 
 
 class TestNotificacoes(ComBase):

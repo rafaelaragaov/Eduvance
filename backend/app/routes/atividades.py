@@ -78,7 +78,7 @@ def listar():
 def obter(id_):
     a = _por_id(id_)
     if not a:
-        raise nao_encontrado("Atividade")
+        raise nao_encontrado("Atividade", feminino=True)
     u = g.user
     if u["perfil"] == "PROFESSOR" and a["idProfessor"] != u["id"]:
         raise proibido()
@@ -116,7 +116,7 @@ def criar():
 def atualizar(id_):
     atual = one("SELECT id_turma_disciplina AS td FROM atividade WHERE id_atividade = ?", (id_,))
     if not atual:
-        raise nao_encontrado("Atividade")
+        raise nao_encontrado("Atividade", feminino=True)
     d = _corpo()
     if not one("SELECT 1 FROM turma_disciplina WHERE id_turma_disciplina = ?", (d["idTurmaDisciplina"],)):
         raise ApiError(400, "Turma/disciplina inválida")
@@ -134,7 +134,7 @@ def atualizar(id_):
 def excluir(id_):
     atual = one("SELECT id_turma_disciplina AS td FROM atividade WHERE id_atividade = ?", (id_,))
     if not atual:
-        raise nao_encontrado("Atividade")
+        raise nao_encontrado("Atividade", feminino=True)
     if not pode_gerir_turma_disciplina(g.user, atual["td"]):
         raise proibido()
     execute("DELETE FROM atividade WHERE id_atividade = ?", (id_,))

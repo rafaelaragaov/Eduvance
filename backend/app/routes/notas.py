@@ -50,7 +50,7 @@ def lancar():
 
     av = one("SELECT id_turma_disciplina AS td FROM avaliacao WHERE id_avaliacao = ?", (id_av,))
     if not av:
-        raise nao_encontrado("Avaliação")
+        raise nao_encontrado("Avaliação", feminino=True)
     if not pode_gerir_turma_disciplina(g.user, av["td"]):
         raise proibido()
     if not one("SELECT 1 FROM aluno a JOIN turma_disciplina td ON td.id_turma = a.id_turma WHERE a.id_aluno = ? AND td.id_turma_disciplina = ?", (id_aluno, av["td"])):
@@ -82,7 +82,7 @@ def _avaliacao_com_alunos(id_av: int) -> dict:
         (id_av,),
     )
     if not av:
-        raise nao_encontrado("Avaliação")
+        raise nao_encontrado("Avaliação", feminino=True)
     if not pode_gerir_turma_disciplina(g.user, av["idTurmaDisciplina"]):
         raise proibido()
     alunos = rows(
