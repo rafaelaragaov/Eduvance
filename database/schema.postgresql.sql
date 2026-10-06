@@ -5,7 +5,7 @@
 -- Ajustes em relação à Sprint 02 (documentados no relatório):
 --   * turma_disciplina ganhou chave substituta id_turma_disciplina (+ UNIQUE turma/disciplina)
 --   * usuario.perfil inclui ADMIN; usuario.ativo; índice único case-insensitive em e-mail
---   * avaliacao.bimestre (boletim por bimestre)
+--   * avaliacao.bimestre (boletim por bimestre); avaliacao.peso (Sprint 04)
 --   * ocorrencia.titulo
 --   * material.detalhe / material.vestibular; forum.id_disciplina
 --   * NOVAS tabelas: horario (PB22) e redacao (PB28)
@@ -137,8 +137,10 @@ CREATE TABLE avaliacao (
     titulo              VARCHAR(160) NOT NULL,
     data_avaliacao      DATE         NOT NULL,
     tipo                VARCHAR(30)  NOT NULL DEFAULT 'PROVA',
-    bimestre            SMALLINT     NOT NULL DEFAULT 1 CHECK (bimestre BETWEEN 1 AND 4)
+    bimestre            SMALLINT     NOT NULL DEFAULT 1 CHECK (bimestre BETWEEN 1 AND 4),
+    peso                NUMERIC(3,1) NOT NULL DEFAULT 1 CHECK (peso > 0 AND peso <= 5)   -- Sprint 04: média ponderada
 );
+CREATE UNIQUE INDEX ux_avaliacao_titulo ON avaliacao (id_turma_disciplina, bimestre, lower(titulo));
 
 CREATE TABLE nota (
     id_nota      SERIAL       PRIMARY KEY,

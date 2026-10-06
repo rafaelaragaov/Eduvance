@@ -139,6 +139,18 @@ def popular(con) -> None:
         for d, v in por.items():
             ins("INSERT INTO nota (id_avaliacao,id_aluno,valor) VALUES (?,?,?)", (aval[(t, d)], a, v))
 
+    # 1º bimestre: prova (peso 1) e trabalho (peso 0,5), para o boletim completo (Sprint 04)
+    ajuste = {lucas: -0.5, mariana: 0.3, thiago: 0.4, ana: 0.0}
+    for (t, d), id_td in td.items():
+        p1 = ins("INSERT INTO avaliacao (id_turma_disciplina,titulo,data_avaliacao,tipo,bimestre,peso) VALUES (?,?,?,?,1,1)",
+                 (id_td, "Prova B1", (hoje - timedelta(days=75)).isoformat(), "PROVA"))
+        tr = ins("INSERT INTO avaliacao (id_turma_disciplina,titulo,data_avaliacao,tipo,bimestre,peso) VALUES (?,?,?,?,1,0.5)",
+                 (id_td, "Trabalho B1", (hoje - timedelta(days=60)).isoformat(), "TRABALHO"))
+        for a, tt, por in notas:
+            if tt == t and d in por:
+                ins("INSERT INTO nota (id_avaliacao,id_aluno,valor) VALUES (?,?,?)", (p1, a, round(min(10, max(0, por[d] + ajuste[a])), 1)))
+                ins("INSERT INTO nota (id_avaliacao,id_aluno,valor) VALUES (?,?,?)", (tr, a, round(min(10, por[d] + 0.5), 1)))
+
     dias = _dias_uteis(20, hoje)
     faltas = [
         (lucas, "8º Ano B", {"Matemática": [3], "História": [7], "Geografia": [12]}),

@@ -22,6 +22,8 @@ class Config:
     META_FREQUENCIA = 90.0
     BIMESTRE_ATUAL = 2
     MEDIA_APROVACAO = 6.0
+    FREQUENCIA_MINIMA = 75.0      # % mínima de presença exigida (Sprint 04)
+    MIN_AULAS_PARA_FALTA = 10     # só aplica a reprovação por falta com pelo menos N aulas registradas
 
     # Proteção contra força bruta no login
     LOGIN_MAX_POR_MINUTO = int(os.environ.get("EDUVANCE_LOGIN_MAX", "20"))

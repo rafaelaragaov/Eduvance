@@ -16,7 +16,7 @@ def boletim(id_aluno: int, bimestre: int | None = None) -> list[dict]:
     bimestre = bimestre or cfg["BIMESTRE_ATUAL"]
     linhas = rows(
         """SELECT td.id_turma_disciplina AS id, d.nome AS materia,
-                  (SELECT AVG(n.valor) FROM avaliacao av JOIN nota n ON n.id_avaliacao = av.id_avaliacao
+                  (SELECT SUM(n.valor * av.peso) / SUM(av.peso) FROM avaliacao av JOIN nota n ON n.id_avaliacao = av.id_avaliacao
                     WHERE av.id_turma_disciplina = td.id_turma_disciplina AND av.bimestre = ?
                       AND n.id_aluno = a.id_aluno) AS nota,
                   (SELECT 100.0 * SUM(f.presente) / COUNT(*) FROM frequencia f
