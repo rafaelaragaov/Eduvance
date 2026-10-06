@@ -39,6 +39,8 @@ def registrar_handlers(app):
             return jsonify(erro="Já existe um aluno com esta matrícula"), 409
         if "máximo 2 responsáveis" in msg:
             return jsonify(erro="Um aluno pode ter no máximo 2 responsáveis vinculados"), 400
+        if "avaliacao.titulo" in msg:
+            return jsonify(erro="Já existe uma avaliação com este título neste bimestre para a turma/disciplina"), 409
         if "FOREIGN KEY" in msg:
             return jsonify(erro="Operação inválida: registro relacionado inexistente ou em uso"), 409
         if "UNIQUE" in msg:
@@ -134,6 +136,18 @@ class Corpo:
         if not (minimo <= n <= maximo):
             self._erro(campo, f"{rotulo} deve estar entre {minimo:g} e {maximo:g}")
         return n
+
+    def opcao(self, campo, rotulo, opcoes, obrigatorio=True, padrao=None):
+        rotulo = rotulo or campo
+        v = self.d.get(campo)
+        if v in (None, ""):
+            if obrigatorio:
+                self._erro(campo, f"{rotulo} é obrigatório")
+            return padrao
+        if v not in opcoes:
+            self._erro(campo, f"{rotulo} deve ser um de: {', '.join(map(str, opcoes))}")
+            return None
+        return v
 
     def data(self, campo, rotulo=None, obrigatorio=True):
         rotulo = rotulo or campo
