@@ -182,10 +182,20 @@ def popular(con) -> None:
         ins("INSERT INTO atividade (id_turma_disciplina,titulo,descricao,data_entrega) VALUES (?,?,?,?)", (td[(t, d)], titulo, desc, data))
 
     # ---- comunicados, eventos, ocorrências, mensalidades
-    ins("INSERT INTO comunicado (titulo,mensagem,data_publicacao,id_usuario_autor) VALUES (?,?,?,?)",
-        (f"Feira de Ciências {ano}", "Os grupos devem enviar os temas de maquetes até a próxima sexta-feira.", _dt(hoje - timedelta(days=2), 9), paula))
-    ins("INSERT INTO comunicado (titulo,mensagem,data_publicacao,id_usuario_autor) VALUES (?,?,?,?)",
-        ("Reunião de Pais e Mestres", "Convocamos os responsáveis para a reunião bimestral que ocorrerá no auditório.", _dt(hoje - timedelta(days=4), 9), paula))
+    def comunicado(titulo, msg, quando, autor, publico="TODOS", id_turma=None, lido_por=()):
+        cid = ins("INSERT INTO comunicado (titulo,mensagem,data_publicacao,id_usuario_autor,publico,id_turma) VALUES (?,?,?,?,?,?)",
+                  (titulo, msg, quando, autor, publico, id_turma))
+        for u in lido_por:
+            ins("INSERT INTO comunicado_leitura (id_comunicado,id_usuario,lido_em) VALUES (?,?,?)", (cid, u, quando))
+        return cid
+
+    comunicado(f"Feira de Ciências {ano}", "Os grupos devem enviar os temas de maquetes até a próxima sexta-feira.", _dt(hoje - timedelta(days=2), 9), paula, lido_por=[maria])
+    comunicado("Reunião de Pais e Mestres", "Convocamos os responsáveis para a reunião bimestral que ocorrerá no auditório.", _dt(hoje - timedelta(days=4), 9), paula,
+               "RESPONSAVEIS", lido_por=[maria])
+    comunicado("Prova de Matemática remarcada", "A prova do 1º bimestre do 8º Ano B foi remarcada. Revisem os capítulos 3 e 4 e tragam calculadora.",
+               _dt(hoje - timedelta(days=1), 15), prof["ricardo"], "TURMA", turma["8º Ano B"])
+    comunicado("Planejamento do 4º bimestre", "Professores: enviem os planos de aula do próximo bimestre à coordenação até o dia 20.",
+               _dt(hoje - timedelta(days=3), 10), paula, "PROFESSORES", lido_por=[prof["ricardo"]])
 
     for titulo, desc, dias_, h, tipo in [
         ("Reunião de Pais e Mestres", "Entrega de boletins do 3º Bimestre", 10, 19, "REUNIAO"),
@@ -194,15 +204,42 @@ def popular(con) -> None:
     ]:
         ins("INSERT INTO evento (titulo,descricao,inicio,tipo) VALUES (?,?,?,?)", (titulo, desc, _dt(hoje + timedelta(days=dias_), h), tipo))
 
-    for a, p, titulo, desc, quando, status in [
-        (lucas, prof["marcelo"], "Conversa Paralela em Sala",
-         f"Lucas foi advertido por conversar excessivamente durante a aula de Geografia em {hoje:%d/%m}.", _dt(hoje, 10, 30), "ABERTA"),
-        (mariana, prof["ana"], "Atraso recorrente no primeiro tempo", "Chegou atrasado pela terceira vez na semana.", _dt(hoje - timedelta(days=1), 8, 15), "ABERTA"),
-        (thiago, prof["marcelo"], "Esquecimento de material", "Sem o material de Geografia pela segunda vez.", _dt(hoje - timedelta(days=3), 13, 10), "ABERTA"),
-        (thiago, prof["ana"], "Uso de celular em aula", "Advertido verbalmente pelo uso do celular durante a explicação.", _dt(hoje - timedelta(days=5), 8, 20), "ABERTA"),
-        (lucas, prof["carlos"], "Atraso na entrega de trabalho", "Trabalho de História entregue com atraso; já regularizado.", _dt(hoje - timedelta(days=20), 10, 0), "RESOLVIDA"),
+    ocorrencias = {}
+    for chave, a, p, titulo, desc, quando, status, tipo, grav in [
+        ("conversa", lucas, prof["marcelo"], "Conversa Paralela em Sala",
+         f"Lucas foi advertido por conversar excessivamente durante a aula de Geografia em {hoje:%d/%m}.", _dt(hoje, 10, 30), "ABERTA", "DISCIPLINAR", "LEVE"),
+        ("atraso", mariana, prof["ana"], "Atraso recorrente no primeiro tempo", "Chegou atrasado pela terceira vez na semana.",
+         _dt(hoje - timedelta(days=1), 8, 15), "EM_ANALISE", "DISCIPLINAR", "MEDIA"),
+        ("material", thiago, prof["marcelo"], "Esquecimento de material", "Sem o material de Geografia pela segunda vez.",
+         _dt(hoje - timedelta(days=3), 13, 10), "ABERTA", "PEDAGOGICA", "LEVE"),
+        ("celular", thiago, prof["ana"], "Uso de celular em aula", "Advertido verbalmente pelo uso do celular durante a explicação.",
+         _dt(hoje - timedelta(days=5), 8, 20), "ABERTA", "DISCIPLINAR", "MEDIA"),
+        ("trabalho", lucas, prof["carlos"], "Atraso na entrega de trabalho", "Trabalho de História entregue com atraso; já regularizado.",
+         _dt(hoje - timedelta(days=20), 10, 0), "RESOLVIDA", "PEDAGOGICA", "LEVE"),
+        ("elogio", mariana, prof["ricardo"], "Destaque na Olimpíada de Matemática", "Mariana resolveu todas as questões da fase escolar e ajudou os colegas.",
+         _dt(hoje - timedelta(days=2), 11, 0), "RESOLVIDA", "ELOGIO", "LEVE"),
     ]:
-        ins("INSERT INTO ocorrencia (id_aluno,id_professor,titulo,descricao,data_ocorrencia,status) VALUES (?,?,?,?,?,?)", (a, p, titulo, desc, quando, status))
+        oid = ins("INSERT INTO ocorrencia (id_aluno,id_professor,titulo,descricao,data_ocorrencia,status,tipo,gravidade) VALUES (?,?,?,?,?,?,?,?)",
+                  (a, p, titulo, desc, quando, status, tipo, grav))
+        ocorrencias[chave] = oid
+        ins("INSERT INTO ocorrencia_historico (id_ocorrencia,id_usuario,status_anterior,status_novo,comentario,criado_em) VALUES (?,?,NULL,'ABERTA','Ocorrência registrada',?)", (oid, p, quando))
+        if status in ("EM_ANALISE", "RESOLVIDA"):
+            ins("INSERT INTO ocorrencia_historico (id_ocorrencia,id_usuario,status_anterior,status_novo,comentario,criado_em) VALUES (?,?,'ABERTA','EM_ANALISE','Coordenação iniciou a análise',?)", (oid, paula, quando))
+        if status == "RESOLVIDA":
+            parecer = "Aluno conversou com a coordenação e regularizou a pendência." if tipo != "ELOGIO" else "Elogio registrado no histórico do aluno e comunicado aos responsáveis."
+            ins("INSERT INTO ocorrencia_historico (id_ocorrencia,id_usuario,status_anterior,status_novo,comentario,criado_em) VALUES (?,?,'EM_ANALISE','RESOLVIDA',?,?)", (oid, paula, parecer, quando))
+            con.execute("UPDATE ocorrencia SET parecer = ?, resolvida_em = ? WHERE id_ocorrencia = ?", (parecer, quando, oid))
+
+    # ---- notificações de demonstração (as demais são geradas pelo uso do sistema)
+    for u, tipo, titulo, msg, link, lida in [
+        (paula, "OCORRENCIA", "Nova ocorrência: Lucas Silva", "Conversa Paralela em Sala (leve).", f"/ocorrencias?id={ocorrencias['conversa']}", 0),
+        (paula, "OCORRENCIA", "Nova ocorrência: Thiago Ramos", "Uso de celular em aula (media).", f"/ocorrencias?id={ocorrencias['celular']}", 0),
+        (maria, "COMUNICADO", "Novo comunicado: Reunião de Pais e Mestres", "Publicado por Paula Ramos.", "/comunicados", 1),
+        (maria, "OCORRENCIA", "Elogio sobre Mariana Costa", "Destaque na Olimpíada de Matemática", f"/ocorrencias?id={ocorrencias['elogio']}", 0),
+        (lucas, "COMUNICADO", "Novo comunicado: Prova de Matemática remarcada", "Publicado por Prof. Ricardo.", "/comunicados", 0),
+        (prof["ricardo"], "COMUNICADO", "Novo comunicado: Planejamento do 4º bimestre", "Publicado por Paula Ramos.", "/comunicados", 0),
+    ]:
+        ins("INSERT INTO notificacao (id_usuario,tipo,titulo,mensagem,link,lida) VALUES (?,?,?,?,?,?)", (u, tipo, titulo, msg, link, lida))
 
     mes_ant = (hoje.replace(day=1) - timedelta(days=1)).replace(day=10)
     for a in (lucas, ana):

@@ -5,6 +5,7 @@ from ..db import one, rows
 from ..errors import nao_encontrado, proibido
 from ..security import auth_required
 from ..services import academico as ac
+from ..services import comunicacao as cm
 from ..services.acesso import alunos_vinculados, pode_ver_aluno
 
 bp = Blueprint("dashboard", __name__, url_prefix="/api")
@@ -88,10 +89,18 @@ def _aluno(id_: int) -> dict:
         "boletim": linhas,
         "agendaHoje": ac.aulas_do_dia(turma_id=turma) if turma else [],
         "atividades": ativ[:3],
-        "comunicados": rows(
-            "SELECT id_comunicado AS id, titulo, mensagem, data_publicacao AS data FROM comunicado ORDER BY data_publicacao DESC LIMIT 3"
-        ),
+        "comunicados": _comunicados_recentes({"id": id_, "perfil": "ALUNO"}),
     }
+
+
+def _comunicados_recentes(user: dict, limite: int = 3) -> list[dict]:
+    """Comunicados dirigidos ao usuário (Sprint 05: respeitam o público de cada comunicado)."""
+    filtro, params = cm.filtro_comunicados(user)
+    return rows(
+        f"""SELECT c.id_comunicado AS id, c.titulo, c.mensagem, c.data_publicacao AS data FROM comunicado c
+             WHERE {filtro} ORDER BY c.data_publicacao DESC, c.id_comunicado DESC LIMIT ?""",
+        (*params, limite),
+    )
 
 
 def _professor(id_: int) -> dict:
@@ -113,7 +122,7 @@ def _coordenador() -> dict:
     cfg = current_app.config
     k = one(
         """SELECT (SELECT COUNT(*) FROM usuario WHERE perfil = 'PROFESSOR' AND ativo = 1) AS professores,
-                  (SELECT COUNT(*) FROM ocorrencia WHERE status = 'ABERTA') AS ocorrencias,
+                  (SELECT COUNT(*) FROM ocorrencia WHERE status <> 'RESOLVIDA') AS ocorrencias,
                   (SELECT ROUND(100.0 * SUM(presente) / COUNT(*), 1) FROM frequencia) AS frequencia"""
     )
     return {
@@ -144,7 +153,7 @@ def _coordenador() -> dict:
                  JOIN aluno a ON a.id_aluno = o.id_aluno
                  JOIN usuario u ON u.id_usuario = a.id_aluno
                  LEFT JOIN turma t ON t.id_turma = a.id_turma
-                WHERE o.status = 'ABERTA' ORDER BY o.data_ocorrencia DESC LIMIT 4"""
+                WHERE o.status <> 'RESOLVIDA' ORDER BY o.data_ocorrencia DESC LIMIT 4"""
         ),
     }
 
