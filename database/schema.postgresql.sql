@@ -10,6 +10,8 @@
 --   * material.detalhe / material.vestibular; forum.id_disciplina
 --   * NOVAS tabelas: horario (PB22) e redacao (PB28)
 --   * trigger: no máximo 2 responsáveis por aluno (requisito 6.1)
+--   * Sprint 05 (Comunicação Escolar): comunicado.publico/id_turma; ocorrencia.tipo/gravidade/parecer/resolvida_em;
+--     NOVAS tabelas comunicado_leitura, ocorrencia_historico e notificacao (validado no PostgreSQL 16)
 -- ============================================================================
 
 -- ---------- Usuários e perfis ----------------------------------------------
