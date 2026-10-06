@@ -2,7 +2,7 @@
 
 Plataforma que centraliza informações acadêmicas, pedagógicas e administrativas entre escola, professores, alunos e responsáveis, com uma área de preparação para vestibulares.
 
-**Disciplina:** Fábrica de Software · **Turma:** 8NB · **Estado:** Sprint 04 — primeiro módulo completo (Notas, Frequência e Boletim)
+**Disciplina:** Fábrica de Software · **Turma:** 8NB · **Estado:** Sprint 05 — segundo módulo (Comunicação Escolar: Comunicados, Ocorrências e Notificações)
 
 | Camada | Tecnologia |
 |---|---|
@@ -19,6 +19,17 @@ Plataforma que centraliza informações acadêmicas, pedagógicas e administrati
 - ✅ **CRUD principal: Atividades** (cadastrar, consultar, atualizar, excluir) + entrega pelo aluno.
 - ✅ **Dashboards por perfil** conforme os protótipos (aluno, responsável, professor, coordenador, admin) e **Área de Vestibular**.
 - ✅ **Execução local** em um comando.
+
+## Sprint 05 — Módulo Comunicação Escolar (PB18, PB19, PB21)
+
+1. **Coordenação, administração e professores** publicam **comunicados** para todos, só alunos, só responsáveis, só professores ou uma turma (professor: apenas turmas em que leciona). Cada destinatário é **notificado** e marca como lido; quem publicou vê "lido por X de Y".
+2. **Professor** registra uma **ocorrência** (disciplinar, pedagógica, saúde ou elogio; leve, média ou grave). A coordenação é notificada (e os responsáveis, se média/grave ou elogio).
+3. **Coordenação** coloca em análise e **resolve com parecer obrigatório**; a situação só avança e cada passo fica no **histórico**. Professor e responsáveis são avisados.
+4. **Sino de notificações** no cabeçalho (contador, lista rápida e central em `/notificacoes`). Integra com o módulo anterior: quando a frequência de um aluno cai abaixo de 75%, aluno e responsáveis recebem um alerta (uma única vez).
+
+Regras: público do comunicado não muda depois de publicado; comunicado repetido em 5 min é recusado; ocorrência duplicada no mesmo dia é recusada; elogio não tem gravidade; ocorrência resolvida não pode ser editada; aluno vê só as próprias ocorrências e responsável só as dos filhos.
+
+> Atualizando da Sprint 04? Recrie o banco: `python -m app.init_db --reset` (novas tabelas `comunicado_leitura`, `ocorrencia_historico`, `notificacao` e novas colunas em `comunicado` e `ocorrencia`).
 
 ## Sprint 04 — Módulo Notas, Frequência e Boletim (PB10, PB11, PB12)
 
@@ -88,7 +99,7 @@ cd backend && EDUVANCE_DEBUG=1 python run.py      # API com recarga automática
 ### Testes
 
 ```bash
-cd backend && python -m unittest discover -s tests -v    # 43 testes de integração (banco temporário)
+cd backend && python -m unittest discover -s tests -v    # 60 testes de integração (banco temporário)
 ```
 
 ## Controle de perfis
@@ -124,6 +135,14 @@ As regras são aplicadas **no servidor** (decorator `@auth_required(...)` + veri
 | GET/PUT | `/api/notas/avaliacao/{id}` | notas da turma / gravar todas de uma vez (atômico) |
 | GET/PUT | `/api/frequencia` | chamada do dia / registrar chamada |
 | GET | `/api/boletim/{idAluno}` | boletim completo (por bimestre, média, frequência, situação) |
+| GET/POST | `/api/comunicados` | listar (filtros `lido=nao`, `busca`) / publicar |
+| GET/PUT/DELETE | `/api/comunicados/{id}` | detalhe (autor vê leituras) / editar / excluir |
+| PUT | `/api/comunicados/{id}/lido` | marcar como lido · `GET /api/comunicados/nao-lidos` |
+| GET/POST | `/api/ocorrencias` | listar (filtros `status`, `gravidade`, `tipo`, `idAluno`, `busca`) / registrar |
+| GET/PUT/DELETE | `/api/ocorrencias/{id}` | detalhe com histórico / editar / excluir |
+| PUT | `/api/ocorrencias/{id}/status` | coordenação: em análise ou resolver (parecer) · `GET /api/ocorrencias/resumo` |
+| GET | `/api/notificacoes` | minhas notificações (`naoLidas=1`) · `GET /api/notificacoes/contagem` |
+| PUT/DELETE | `/api/notificacoes/{id}/lida` · `/lidas` · `/{id}` | marcar lida / marcar todas / excluir |
 | GET | `/api/catalogo/alunos` | alunos que o usuário pode consultar |
 | PUT | `/api/notas` | lançamento rápido de uma nota (dashboard do professor) |
 | GET | `/api/dashboard` | dashboard do perfil logado |
@@ -144,7 +163,7 @@ docs/               relatório da Sprint 03 e evidências (capturas de tela)
 
 ## Roadmap
 
-Próximas Sprints: agenda e calendário, comunicados, ocorrências, mensalidades, notificações, chat professor/aluno, gabaritos e serviço de recomendação (Python/FastAPI) — itens PB13 a PB30 do backlog.
+Próximas Sprints: agenda e calendário (PB13, PB16, PB17), mensalidades (PB20), horários (PB22), chat professor/aluno, gabaritos e serviço de recomendação (Python/FastAPI) — itens PB13 a PB30 do backlog.
 
 ## Equipe
 
