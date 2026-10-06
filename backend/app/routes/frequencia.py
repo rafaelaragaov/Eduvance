@@ -46,6 +46,7 @@ def _td(id_td) -> dict:
 
 def _dia(td: dict, data: str) -> dict:
     minimo = current_app.config["FREQUENCIA_MINIMA"]
+    min_aulas = current_app.config["MIN_AULAS_PARA_FALTA"]
     alunos = rows(
         """SELECT a.id_aluno AS idAluno, u.nome, a.matricula, fh.presente AS presente,
                   (SELECT COUNT(*) FROM frequencia f WHERE f.id_aluno = a.id_aluno AND f.id_turma_disciplina = ?) AS aulas,
@@ -61,7 +62,8 @@ def _dia(td: dict, data: str) -> dict:
     for a in alunos:
         a["presente"] = None if a["presente"] is None else bool(a["presente"])
         a["frequencia"] = None if not a["aulas"] else round(100.0 * (a["aulas"] - a["faltas"]) / a["aulas"], 1)
-        a["abaixoDoMinimo"] = a["frequencia"] is not None and a["frequencia"] < minimo
+        # mesma regra do boletim: só vale com um mínimo de aulas registradas (evita alarme com 1 falta em 2 aulas)
+        a["abaixoDoMinimo"] = a["frequencia"] is not None and a["aulas"] >= min_aulas and a["frequencia"] < minimo
     registrada = any(a["presente"] is not None for a in alunos)
     return {
         "idTurmaDisciplina": td["id"], "turma": td["turma"], "disciplina": td["disciplina"], "data": data,
@@ -117,7 +119,7 @@ def registrar():
                        [{"campo": "registros", "mensagem": f"Faltam {faltando} aluno(s) na chamada"}])
 
     min_aulas = current_app.config["MIN_AULAS_PARA_FALTA"]
-    antes = {a["idAluno"]: a["abaixoDoMinimo"] and a["aulas"] >= min_aulas for a in _dia(td, data)["alunos"]}
+    antes = {a["idAluno"]: a["abaixoDoMinimo"] for a in _dia(td, data)["alunos"]}
     with transacao() as con:
         for ida, pres in marcados.items():
             con.execute(

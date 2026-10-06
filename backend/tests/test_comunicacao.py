@@ -292,6 +292,21 @@ class TestMensagensDeErro(ComBase):
         self.assertEqual(r.get_json()["erro"], "Notificação não encontrada")
 
 
+class TestFrequenciaCoerente(ComBase):
+    def test_abaixo_do_minimo_so_com_aulas_suficientes(self):
+        ricardo = self.login("roberta@eduvance.com")  # 9º Ano A · Redação não tem chamadas no seed
+        td = next(t["id"] for t in self.c.get("/api/catalogo/turma-disciplinas", headers=ricardo).get_json()
+                  if t["turma"] == "9º Ano A" and t["disciplina"] == "Redação")
+        dia = _dia_util()
+        alunos = self.c.get(f"/api/frequencia?idTurmaDisciplina={td}&data={dia}", headers=ricardo).get_json()["alunos"]
+        regs = [{"idAluno": a["idAluno"], "presente": a["idAluno"] != alunos[0]["idAluno"]} for a in alunos]
+        r = self.c.put("/api/frequencia", headers=ricardo, json={"idTurmaDisciplina": td, "data": str(dia), "registros": regs}).get_json()
+        faltoso = next(a for a in r["alunos"] if a["idAluno"] == alunos[0]["idAluno"])
+        self.assertEqual((faltoso["aulas"], faltoso["faltas"], faltoso["frequencia"]), (1, 1, 0.0))
+        self.assertFalse(faltoso["abaixoDoMinimo"])  # 0% com apenas 1 aula registrada não é alarme
+        self.assertEqual(r["alertas"], 0)
+
+
 class TestNotificacoes(ComBase):
     def test_leitura_individual_e_em_massa(self):
         maria = self.login("maria@eduvance.com")
