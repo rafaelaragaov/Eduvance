@@ -1,0 +1,65 @@
+COORDENADORA — notificações e comunicados
+  ✔ sino mostra 2 notificações não lidas (seed)
+  ✔ navegação: menu Comunicados
+  ✔ validação: título curto e mensagem curta
+  ✔ comunicado publicado: Comunicado publicado! 34 pessoa(s) notificada(s).
+  ✔ CREATE: comunicado aparece no mural
+  ✔ erro do servidor: comunicado repetido
+  ✔ coordenação acompanha leitura: "Lido por 0 de N destinatário(s)"
+ALUNO — recebe, lê e não vê o que não é seu
+  ✔ aluno vê 2 notificações não lidas no sino
+  ✔ aluno do 8º Ano B vê os comunicados da sua turma
+  ✔ aluno NÃO vê comunicados de professores/responsáveis
+  ✔ comunicados novos destacados como não lidos
+  ✔ marcado como lido
+  ✔ aba "Não lidos" com contador
+  ✔ aluno não vê o botão de publicar
+PROFESSOR — registra ocorrência (validações)
+  ✔ validação: aluno, título e descrição
+  ✔ ocorrência registrada: Ocorrência registrada! A coordenação foi notificada.
+  ✔ CREATE: ocorrência aparece na lista do professor
+  ✔ erro do servidor: ocorrência duplicada no dia
+  ✔ professor: público fixo em "Uma turma específica"
+  ✔ sem erros JS (professor): 
+COORDENADORA — notificação → ocorrência → análise → resolução
+  ✔ coordenação recebeu notificação da nova ocorrência (2 + 1)
+  ✔ navegação: clique na notificação abre a ocorrência
+  ✔ detalhe da ocorrência aberto direto pelo link
+  ✔ resolver sem parecer é bloqueado
+  ✔ histórico registra a mudança para "Em análise"
+  ✔ resolvida com parecer e histórico de 3 etapas
+  ✔ fechar o detalhe volta para a lista
+RESPONSÁVEL — avisos e alerta de frequência
+  ✔ chamadas registradas geraram 2 alerta(s) de frequência (aluna + responsável)
+  ✔ responsável vê 5 notificações não lidas
+  ✔ notificação de frequência abaixo do mínimo
+  ✔ notificação de ocorrência resolvida
+  ✔ notificação de ocorrência grave
+  ✔ responsável lê o parecer da coordenação
+  ✔ responsável não vê ações da coordenação
+  ✔ fechar o detalhe aberto por notificação leva à lista de ocorrências
+  ✔ sino → "Ver todas as notificações"
+  ✔ marcar todas como lidas zera o sino
+  ✔ responsável só vê ocorrências dos filhos: Lucas Silva
+RBAC e escopo
+  ✔ aluno não abre ocorrência de outro aluno: Ocorrência não encontrada
+  ✔ aluno não vê o botão de registrar ocorrência
+  ✔ API recusa publicação por aluno (403)
+Dashboards e mobile
+  ✔ dashboard → Ocorrências por link
+REINÍCIO DO SERVIDOR — dados permanecem
+5057/tcp:           
+  ✔ comunicado continua publicado após reiniciar o servidor
+  ✔ ocorrência continua "Resolvida" após reiniciar
+
+SQLITE direto:
+id_ocorrencia | titulo | status | gravidade | parecer
+7 | Briga no intervalo | RESOLVIDA | GRAVE | Conversa com os alunos envolvidos e cont
+
+tipo | n | nao_lidas
+COMUNICADO | 37 | 35
+FREQUENCIA | 2 | 1
+OCORRENCIA | 10 | 6
+
+
+TODOS OS CHECKS OK

@@ -1,0 +1,31 @@
+Banco consultado DIRETAMENTE (sqlite3) depois do teste de ponta a ponta e de reiniciar o servidor.
+
+$ comunicados publicados no teste
+titulo | publico | turma | autor
+Simulado de Matemática | TURMA | 8º Ano B | Paula Ramos
+
+$ leitura do comunicado (aluno Lucas marcou como lido)
+titulo | leitor | lido_em
+Simulado de Matemática | Lucas Silva | 2026-10-05 22:13:40
+
+$ ocorrência criada pelo professor e resolvida pela coordenação
+id_ocorrencia | titulo | tipo | gravidade | status | parecer
+7 | Briga no intervalo | DISCIPLINAR | GRAVE | RESOLVIDA | Conversa com os alunos envolvidos e contato com 
+
+$ histórico (trilha de auditoria) dessa ocorrência
+status_anterior | status_novo | usuario
+None | ABERTA | Ricardo Ramos
+ABERTA | EM_ANALISE | Paula Ramos
+EM_ANALISE | RESOLVIDA | Paula Ramos
+
+$ notificações geradas por tipo
+tipo | total | nao_lidas
+COMUNICADO | 37 | 35
+FREQUENCIA | 2 | 1
+OCORRENCIA | 10 | 6
+
+$ alerta de frequência (aluna e responsável)
+destinatario | titulo
+Ana Silva | Frequência abaixo do mínimo — Matemática
+Maria Silva | Frequência abaixo do mínimo — Matemática
+
