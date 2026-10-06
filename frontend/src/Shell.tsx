@@ -17,7 +17,7 @@ export interface NavItem {
 export const NAV: Record<Perfil, NavItem[]> = {
   ALUNO: [
     { to: '/', label: 'Dashboard', icon: 'grid' },
-    { to: '/boletim', label: 'Boletim', icon: 'book', pb: 'PB10' },
+    { to: '/boletim', label: 'Boletim', icon: 'book' },
     { to: '/agenda', label: 'Agenda', icon: 'calendar', pb: 'PB13' },
     { to: '/atividades', label: 'Atividades', icon: 'file' },
     { to: '/provas', label: 'Provas', icon: 'bookmark', pb: 'PB16' },
@@ -27,9 +27,11 @@ export const NAV: Record<Perfil, NavItem[]> = {
   PROFESSOR: [
     { to: '/', label: 'Dashboard', icon: 'grid' },
     { to: '/turmas', label: 'Minhas Turmas', icon: 'users', pb: 'PB07' },
+    { to: '/avaliacoes', label: 'Avaliações', icon: 'bookmark' },
     { to: '/notas', label: 'Lançar Notas', icon: 'edit' },
+    { to: '/frequencia', label: 'Frequência', icon: 'checkCircle' },
     { to: '/atividades', label: 'Atividades', icon: 'file' },
-    { to: '/provas', label: 'Provas', icon: 'bookmark', pb: 'PB16' },
+    { to: '/boletim', label: 'Boletins', icon: 'book' },
     { to: '/comunicados', label: 'Comunicados', icon: 'message', pb: 'PB18' },
     { to: '/ocorrencias', label: 'Ocorrências', icon: 'alert', pb: 'PB19' },
   ],
@@ -37,8 +39,10 @@ export const NAV: Record<Perfil, NavItem[]> = {
     { to: '/', label: 'Dashboard', icon: 'grid' },
     { to: '/professores', label: 'Professores', icon: 'users' },
     { to: '/agenda', label: 'Agenda Escolar', icon: 'calendar', pb: 'PB13' },
-    { to: '/provas', label: 'Provas', icon: 'bookmark', pb: 'PB16' },
+    { to: '/avaliacoes', label: 'Avaliações', icon: 'bookmark' },
     { to: '/notas', label: 'Notas', icon: 'file' },
+    { to: '/frequencia', label: 'Frequência', icon: 'checkCircle' },
+    { to: '/boletim', label: 'Boletins', icon: 'book' },
     { to: '/atividades', label: 'Atividades', icon: 'edit' },
     { to: '/ocorrencias', label: 'Ocorrências', icon: 'alert', pb: 'PB19' },
     { to: '/horarios', label: 'Horários', icon: 'clock', pb: 'PB22' },
@@ -47,7 +51,7 @@ export const NAV: Record<Perfil, NavItem[]> = {
     { to: '/', label: 'Dashboard', icon: 'grid' },
     { to: '/alunos', label: 'Meus Alunos', icon: 'users', pb: 'PB09' },
     { to: '/mensalidades', label: 'Mensalidade', icon: 'card', pb: 'PB20' },
-    { to: '/boletim', label: 'Boletim', icon: 'book', pb: 'PB10' },
+    { to: '/boletim', label: 'Boletim', icon: 'book' },
     { to: '/atividades', label: 'Atividades', icon: 'file' },
     { to: '/ocorrencias', label: 'Ocorrências', icon: 'alert', pb: 'PB19' },
     { to: '/comunicados', label: 'Comunicados', icon: 'message', pb: 'PB18' },
@@ -57,7 +61,10 @@ export const NAV: Record<Perfil, NavItem[]> = {
     { to: '/', label: 'Dashboard', icon: 'grid' },
     { to: '/usuarios', label: 'Usuários', icon: 'users' },
     { to: '/atividades', label: 'Atividades', icon: 'file' },
+    { to: '/avaliacoes', label: 'Avaliações', icon: 'bookmark' },
     { to: '/notas', label: 'Notas', icon: 'edit' },
+    { to: '/frequencia', label: 'Frequência', icon: 'checkCircle' },
+    { to: '/boletim', label: 'Boletins', icon: 'book' },
   ],
 };
 

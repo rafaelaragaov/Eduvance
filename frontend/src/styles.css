@@ -274,3 +274,25 @@ textarea { resize: vertical; min-height: 84px; }
 .sheet-user { display: flex; gap: 12px; align-items: center; padding-bottom: 12px; margin-bottom: 8px; border-bottom: 1px solid var(--line); }
 .sheet-user strong { display: block; } .sheet-user span { font-size: 12px; color: var(--muted); }
 @media (min-width: 821px) { .sheet-backdrop { display: none; } }
+
+/* ---------- Módulo Notas, Frequência e Boletim (Sprint 04) ---------- */
+.nota-input.sujo { border-color: #d6a431; background: #fff9e8; }
+.muted { color: var(--muted); }
+.seg { display: inline-flex; border: 1px solid #cfdfe0; border-radius: 10px; overflow: hidden; }
+.seg button { border: 0; background: #fff; padding: 6px 14px; font-weight: 600; cursor: pointer; color: var(--muted); min-height: 34px; }
+.seg button + button { border-left: 1px solid #cfdfe0; }
+.seg button.presente.on { background: var(--green-bg); color: var(--green); }
+.seg button.falta.on { background: var(--red-bg); color: var(--red); }
+.linha-aluno.abaixo td:first-child strong { color: var(--red); }
+.det-row td { background: var(--row); border-top: 0 !important; padding: 10px 14px !important; text-align: left !important; }
+.det-row ul { margin: 0; padding-left: 18px; }
+.det-row li { padding: 2px 0; }
+.expand-btn { background: none; border: 0; cursor: pointer; color: var(--primary); font-weight: 600; padding: 0; text-align: left; }
+.bol-table th, .bol-table td { text-align: center; }
+.bol-table th:first-child, .bol-table td:first-child { text-align: left; }
+.bol-table th:last-child, .bol-table td:last-child { text-align: right; }
+@media print {
+  .sidebar, .mobile-top, .bottom-nav, .page-header-tools, .no-print, .toasts { display: none !important; }
+  .main { padding: 0; max-width: none; }
+  .card { border: 0; padding: 0; }
+}

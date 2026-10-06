@@ -157,3 +157,78 @@ export interface Vestibular {
   foruns: { id: number; titulo: string; disciplina: string | null; respostas: number }[];
   materiais: { id: number; titulo: string; tipo: string; detalhe: string | null; url: string | null }[];
 }
+
+// ---------- Módulo Notas, Frequência e Boletim (Sprint 04) ----------
+export type TipoAvaliacao = 'PROVA' | 'TRABALHO' | 'TESTE' | 'PROJETO';
+
+export interface Avaliacao {
+  id: number;
+  titulo: string;
+  tipo: TipoAvaliacao;
+  bimestre: number;
+  dataAvaliacao: string;
+  peso: number;
+  idTurmaDisciplina: number;
+  turma: string;
+  anoLetivo: number;
+  disciplina: string;
+  notasLancadas: number;
+  totalAlunos: number;
+  mediaTurma: number | null;
+}
+
+export interface NotasAvaliacao {
+  avaliacao: { id: number; titulo: string; tipo: TipoAvaliacao; bimestre: number; data: string; peso: number; idTurmaDisciplina: number; turma: string; disciplina: string };
+  alunos: { idAluno: number; nome: string; matricula: string; valor: number | null }[];
+  media: number | null;
+}
+
+export interface AlunoFrequencia {
+  idAluno: number;
+  nome: string;
+  matricula: string;
+  presente: boolean | null;
+  aulas: number;
+  faltas: number;
+  frequencia: number | null;
+  abaixoDoMinimo: boolean;
+}
+
+export interface ChamadaDia {
+  idTurmaDisciplina: number;
+  turma: string;
+  disciplina: string;
+  data: string;
+  registrada: boolean;
+  frequenciaMinima: number;
+  alunos: AlunoFrequencia[];
+  resumo?: { presentes: number; faltas: number };
+}
+
+export type Situacao = 'Aprovado' | 'Recuperação' | 'Reprovado por faltas' | 'Sem nota';
+
+export interface DisciplinaBoletim {
+  idTurmaDisciplina: number;
+  materia: string;
+  professor: string | null;
+  bimestres: Record<string, number | null>;
+  mediaParcial: number | null;
+  aulas: number;
+  faltas: number;
+  frequencia: number | null;
+  situacao: Situacao;
+  avaliacoes: { id: number; titulo: string; tipo: TipoAvaliacao; bimestre: number; data: string; peso: number; nota: number | null }[];
+}
+
+export interface BoletimCompleto {
+  aluno: { id: number; nome: string; matricula: string; turma: string | null; idTurma: number | null };
+  bimestreAtual: number;
+  mediaAprovacao: number;
+  frequenciaMinima: number;
+  disciplinas: DisciplinaBoletim[];
+  mediaGeral: number | null;
+  faltasTotal: number;
+  frequenciaGeral: number | null;
+}
+
+export interface AlunoCatalogo { id: number; nome: string; matricula: string; idTurma: number | null; turma: string | null }

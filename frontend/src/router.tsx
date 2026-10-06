@@ -33,3 +33,15 @@ export function Link({ to, onClick, ...rest }: { to: string } & AnchorHTMLAttrib
   };
   return <a href={to} onClick={click} {...rest} />;
 }
+
+/** Compara um caminho com um padrão como '/notas/:id' e devolve os parâmetros (ou null). */
+export function casa(padrao: string, caminho: string): Record<string, string> | null {
+  const a = padrao.split('/'), b = (caminho.replace(/\/+$/, '') || '/').split('/');
+  if (a.length !== b.length) return null;
+  const params: Record<string, string> = {};
+  for (let i = 0; i < a.length; i++) {
+    if (a[i]!.startsWith(':')) params[a[i]!.slice(1)] = decodeURIComponent(b[i]!);
+    else if (a[i] !== b[i]) return null;
+  }
+  return params;
+}
