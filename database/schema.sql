@@ -10,6 +10,8 @@
 --   * material.detalhe / material.vestibular; forum.id_disciplina
 --   * NOVAS tabelas: horario (PB22) e redacao (PB28)
 --   * trigger: no máximo 2 responsáveis por aluno (requisito 6.1)
+--   * Sprint 05 (módulo Comunicação Escolar): comunicado.publico/id_turma; ocorrencia.tipo/gravidade/parecer/
+--     resolvida_em; NOVAS tabelas comunicado_leitura, ocorrencia_historico e notificacao
 -- Datas/horas são gravadas como texto ISO-8601 no horário local da escola.
 -- ============================================================================
 PRAGMA foreign_keys = ON;
@@ -159,7 +161,18 @@ CREATE TABLE comunicado (
     titulo           TEXT NOT NULL,
     mensagem         TEXT NOT NULL,
     data_publicacao  TEXT NOT NULL DEFAULT (datetime('now','localtime')),
-    id_usuario_autor INTEGER REFERENCES usuario(id_usuario) ON DELETE SET NULL
+    id_usuario_autor INTEGER REFERENCES usuario(id_usuario) ON DELETE SET NULL,
+    publico          TEXT NOT NULL DEFAULT 'TODOS'
+                     CHECK (publico IN ('TODOS','ALUNOS','RESPONSAVEIS','PROFESSORES','TURMA')),
+    id_turma         INTEGER REFERENCES turma(id_turma) ON DELETE CASCADE,
+    CHECK ((publico = 'TURMA') = (id_turma IS NOT NULL))      -- turma só quando o público é TURMA
+);
+
+CREATE TABLE comunicado_leitura (                              -- NOVA (Sprint 05)
+    id_comunicado INTEGER NOT NULL REFERENCES comunicado(id_comunicado) ON DELETE CASCADE,
+    id_usuario    INTEGER NOT NULL REFERENCES usuario(id_usuario) ON DELETE CASCADE,
+    lido_em       TEXT    NOT NULL DEFAULT (datetime('now','localtime')),
+    PRIMARY KEY (id_comunicado, id_usuario)
 );
 
 CREATE TABLE ocorrencia (
@@ -169,8 +182,34 @@ CREATE TABLE ocorrencia (
     titulo          TEXT NOT NULL,
     descricao       TEXT NOT NULL,
     data_ocorrencia TEXT NOT NULL DEFAULT (datetime('now','localtime')),
-    status          TEXT NOT NULL DEFAULT 'ABERTA' CHECK (status IN ('ABERTA','EM_ANALISE','RESOLVIDA'))
+    status          TEXT NOT NULL DEFAULT 'ABERTA' CHECK (status IN ('ABERTA','EM_ANALISE','RESOLVIDA')),
+    tipo            TEXT NOT NULL DEFAULT 'DISCIPLINAR' CHECK (tipo IN ('DISCIPLINAR','PEDAGOGICA','SAUDE','ELOGIO')),
+    gravidade       TEXT NOT NULL DEFAULT 'LEVE' CHECK (gravidade IN ('LEVE','MEDIA','GRAVE')),
+    parecer         TEXT,                                      -- conclusão da coordenação (obrigatória ao resolver)
+    resolvida_em    TEXT
 );
+
+CREATE TABLE ocorrencia_historico (                            -- NOVA (Sprint 05): trilha de auditoria
+    id_historico    INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_ocorrencia   INTEGER NOT NULL REFERENCES ocorrencia(id_ocorrencia) ON DELETE CASCADE,
+    id_usuario      INTEGER REFERENCES usuario(id_usuario) ON DELETE SET NULL,
+    status_anterior TEXT,
+    status_novo     TEXT NOT NULL,
+    comentario      TEXT,
+    criado_em       TEXT NOT NULL DEFAULT (datetime('now','localtime'))
+);
+
+CREATE TABLE notificacao (                                     -- NOVA (Sprint 05)
+    id_notificacao INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_usuario     INTEGER NOT NULL REFERENCES usuario(id_usuario) ON DELETE CASCADE,
+    tipo           TEXT NOT NULL CHECK (tipo IN ('COMUNICADO','OCORRENCIA','FREQUENCIA')),
+    titulo         TEXT NOT NULL,
+    mensagem       TEXT NOT NULL,
+    link           TEXT,
+    lida           INTEGER NOT NULL DEFAULT 0 CHECK (lida IN (0,1)),
+    criada_em      TEXT NOT NULL DEFAULT (datetime('now','localtime'))
+);
+CREATE INDEX ix_notificacao_usuario ON notificacao (id_usuario, lida, criada_em);
 
 CREATE TABLE mensalidade (
     id_mensalidade  INTEGER PRIMARY KEY AUTOINCREMENT,

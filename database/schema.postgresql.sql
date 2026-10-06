@@ -165,7 +165,18 @@ CREATE TABLE comunicado (
     titulo           VARCHAR(160) NOT NULL,
     mensagem         TEXT         NOT NULL,
     data_publicacao  TIMESTAMPTZ  NOT NULL DEFAULT now(),
-    id_usuario_autor INTEGER      REFERENCES usuario(id_usuario) ON DELETE SET NULL
+    id_usuario_autor INTEGER      REFERENCES usuario(id_usuario) ON DELETE SET NULL,
+    publico          VARCHAR(14)  NOT NULL DEFAULT 'TODOS'
+                     CHECK (publico IN ('TODOS','ALUNOS','RESPONSAVEIS','PROFESSORES','TURMA')),
+    id_turma         INTEGER      REFERENCES turma(id_turma) ON DELETE CASCADE,
+    CHECK ((publico = 'TURMA') = (id_turma IS NOT NULL))
+);
+
+CREATE TABLE comunicado_leitura (                -- NOVA (Sprint 05)
+    id_comunicado INTEGER     NOT NULL REFERENCES comunicado(id_comunicado) ON DELETE CASCADE,
+    id_usuario    INTEGER     NOT NULL REFERENCES usuario(id_usuario) ON DELETE CASCADE,
+    lido_em       TIMESTAMPTZ NOT NULL DEFAULT now(),
+    PRIMARY KEY (id_comunicado, id_usuario)
 );
 
 CREATE TABLE ocorrencia (
@@ -176,8 +187,35 @@ CREATE TABLE ocorrencia (
     descricao       TEXT         NOT NULL,
     data_ocorrencia TIMESTAMPTZ  NOT NULL DEFAULT now(),
     status          VARCHAR(12)  NOT NULL DEFAULT 'ABERTA'
-                    CHECK (status IN ('ABERTA','EM_ANALISE','RESOLVIDA'))
+                    CHECK (status IN ('ABERTA','EM_ANALISE','RESOLVIDA')),
+    tipo            VARCHAR(12)  NOT NULL DEFAULT 'DISCIPLINAR'
+                    CHECK (tipo IN ('DISCIPLINAR','PEDAGOGICA','SAUDE','ELOGIO')),
+    gravidade       VARCHAR(5)   NOT NULL DEFAULT 'LEVE' CHECK (gravidade IN ('LEVE','MEDIA','GRAVE')),
+    parecer         TEXT,
+    resolvida_em    TIMESTAMPTZ
 );
+
+CREATE TABLE ocorrencia_historico (              -- NOVA (Sprint 05)
+    id_historico    SERIAL      PRIMARY KEY,
+    id_ocorrencia   INTEGER     NOT NULL REFERENCES ocorrencia(id_ocorrencia) ON DELETE CASCADE,
+    id_usuario      INTEGER     REFERENCES usuario(id_usuario) ON DELETE SET NULL,
+    status_anterior VARCHAR(12),
+    status_novo     VARCHAR(12) NOT NULL,
+    comentario      TEXT,
+    criado_em       TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE TABLE notificacao (                       -- NOVA (Sprint 05)
+    id_notificacao SERIAL       PRIMARY KEY,
+    id_usuario     INTEGER      NOT NULL REFERENCES usuario(id_usuario) ON DELETE CASCADE,
+    tipo           VARCHAR(12)  NOT NULL CHECK (tipo IN ('COMUNICADO','OCORRENCIA','FREQUENCIA')),
+    titulo         VARCHAR(160) NOT NULL,
+    mensagem       TEXT         NOT NULL,
+    link           VARCHAR(120),
+    lida           BOOLEAN      NOT NULL DEFAULT FALSE,
+    criada_em      TIMESTAMPTZ  NOT NULL DEFAULT now()
+);
+CREATE INDEX ix_notificacao_usuario ON notificacao (id_usuario, lida, criada_em);
 
 CREATE TABLE mensalidade (
     id_mensalidade  SERIAL        PRIMARY KEY,
