@@ -20,6 +20,10 @@ Plataforma que centraliza informações acadêmicas, pedagógicas e administrati
 - ✅ **Dashboards por perfil** conforme os protótipos (aluno, responsável, professor, coordenador, admin) e **Área de Vestibular**.
 - ✅ **Execução local** em um comando.
 
+## Modo escuro
+
+Todas as telas têm tema claro e escuro. O botão de lua/sol fica na barra lateral (no celular, no topo) e na tela de login. A escolha é salva no navegador (`localStorage`, chave `eduvance:tema`); sem escolha salva, o sistema segue o tema do sistema operacional. O tema é aplicado antes da primeira pintura, então não há "flash" de tela clara. As cores são variáveis CSS em `frontend/src/styles.css` (bloco `:root[data-theme='dark']`) e a lógica está em `frontend/src/theme.tsx`. Evidências e roteiro de teste: `docs/evidencias/dark-mode/`.
+
 ## Sprint 05 — Módulo Comunicação Escolar (PB18, PB19, PB21)
 
 1. **Coordenação, administração e professores** publicam **comunicados** para todos, só alunos, só responsáveis, só professores ou uma turma (professor: apenas turmas em que leciona). Cada destinatário é **notificado** e marca como lido; quem publicou vê "lido por X de Y".

@@ -4,6 +4,19 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Eduvance</title>
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f1f7f7" />
+    <script>
+      /* Aplica o tema antes da pintura para evitar o "flash" de tela clara. */
+      (function () {
+        var t = null;
+        try { t = localStorage.getItem('eduvance:tema'); } catch (e) {}
+        if (t !== 'dark' && t !== 'light') t = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', t);
+        var m = document.querySelector('meta[name="theme-color"]');
+        if (m) m.setAttribute('content', t === 'dark' ? '#0c181b' : '#f1f7f7');
+      })();
+    </script>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

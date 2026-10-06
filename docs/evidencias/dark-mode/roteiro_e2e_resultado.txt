@@ -1,0 +1,43 @@
+LOGIN — tema do sistema e botão
+  ✔ sistema claro → tema claro por padrão
+  ✔ fundo claro
+  ✔ botão no login alterna para escuro
+  ✔ fundo escuro aplicado
+  ✔ escolha persiste após recarregar
+  ✔ preferência salva no navegador
+  ✔ sistema escuro → tema escuro sem escolha salva
+  ✔ acompanha o sistema quando não há escolha salva
+  ✔ após escolher, a preferência manda (escuro)
+  ✔ escolha manual (claro) vence o sistema escuro
+APP — páginas em tema escuro
+  ✔ responsável entra no tema claro
+  ✔ botão da barra lateral alterna
+  ✔ aria-pressed refletido
+  ✔ sidebar escura
+  ✔ cards escuros
+  ✔ comunicados: tema mantido ao navegar
+  ✔ ocorrencias: tema mantido ao navegar
+  ✔ boletim: tema mantido ao navegar
+  ✔ contraste .badge = 6.1:1
+  ✔ contraste .btn-primary = 5.0:1
+  ✔ contraste .nav-item.on = 5.7:1
+  ✔ contraste .muted = 6.4:1
+  ✔ contraste .com-card h2 = 14.2:1
+  ✔ contraste .sino-badge = 5.5:1
+  ✔ contraste .badge-green = 7.2:1
+  ✔ contraste .badge-amber = 7.1:1
+  ✔ contraste .badge-blue = 6.8:1
+  ✔ contraste .badge-gray = 6.4:1
+  ✔ alterna de volta para o claro
+  ✔ fundo volta ao claro
+  ✔ sem erros JS: 
+PROFESSOR — formulários e notas no escuro
+  ✔ modal escuro
+  ✔ campos do formulário escuros
+  ✔ sem erros JS (professor)
+MOBILE
+  ✔ mobile segue o tema do sistema
+  ✔ botão de tema no topo do celular
+  ✔ botão mobile alterna
+
+TODOS OS CHECKS OK

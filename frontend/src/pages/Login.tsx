@@ -3,6 +3,7 @@ import { ApiError } from '../api';
 import { useAuth } from '../auth';
 import { Icon } from '../icons';
 import { navigate } from '../router';
+import { BotaoTema } from '../theme';
 import { Logo } from '../ui';
 
 declare const __DEMO__: boolean;
@@ -44,6 +45,7 @@ export default function Login() {
 
   return (
     <div className="login-page">
+      <span className="login-tema"><BotaoTema className="icon-btn" /></span>
       <div className="login-wrap">
         <form className="login-card" onSubmit={enviar} noValidate>
           <Logo size={38} />

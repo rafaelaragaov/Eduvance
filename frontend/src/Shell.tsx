@@ -3,6 +3,7 @@ import { useAuth } from './auth';
 import { rotuloPerfil } from './format';
 import { Icon, IconName } from './icons';
 import { Link, navigate, usePath } from './router';
+import { BotaoTema } from './theme';
 import { Avatar, Logo, SinoNotificacoes } from './ui';
 import type { Perfil } from './types';
 
@@ -123,6 +124,7 @@ export function Shell({ children }: { children: ReactNode }) {
             <strong>{user.nome}</strong>
             <span>{user.perfil === 'ALUNO' ? `Aluno${user.turma ? ` - ${user.turma}` : ''}` : user.perfil === 'PROFESSOR' ? `Docente${user.especialidade ? ` - ${user.especialidade}` : ''}` : user.cargo ?? rotuloPerfil[user.perfil]}</span>
           </div>
+          <BotaoTema />
           <button className="icon-btn ghost" onClick={logout} aria-label="Sair" title="Sair"><Icon name="logout" size={18} /></button>
         </div>
       </aside>
@@ -132,6 +134,7 @@ export function Shell({ children }: { children: ReactNode }) {
           <Logo size={30} />
           <span className="mobile-tools">
             <SinoNotificacoes />
+            <BotaoTema className="icon-btn" />
             <button className="icon-btn" onClick={() => setMaisAberto(true)} aria-label="Menu"><Icon name="grid" size={18} /></button>
           </span>
         </div>
