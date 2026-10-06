@@ -1,2 +1,0 @@
-# Eduvance
-Projeto Uninassau.
