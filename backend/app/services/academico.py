@@ -41,6 +41,63 @@ def boletim(id_aluno: int, bimestre: int | None = None) -> list[dict]:
     return saida
 
 
+def boletim_completo(id_aluno: int) -> dict:
+    """Boletim por disciplina com média ponderada por bimestre, média parcial, frequência e situação."""
+    cfg = current_app.config
+    aluno = rows(
+        """SELECT u.id_usuario AS id, u.nome, a.matricula, t.nome AS turma, a.id_turma AS idTurma
+             FROM aluno a JOIN usuario u ON u.id_usuario = a.id_aluno LEFT JOIN turma t ON t.id_turma = a.id_turma
+            WHERE a.id_aluno = ?""",
+        (id_aluno,),
+    )[0]
+    disciplinas = []
+    for td in rows(
+        """SELECT td.id_turma_disciplina AS id, d.nome AS materia, up.nome AS professor
+             FROM aluno a JOIN turma_disciplina td ON td.id_turma = a.id_turma
+             JOIN disciplina d ON d.id_disciplina = td.id_disciplina
+             LEFT JOIN usuario up ON up.id_usuario = td.id_professor
+            WHERE a.id_aluno = ? ORDER BY td.id_turma_disciplina""",
+        (id_aluno,),
+    ):
+        avs = rows(
+            """SELECT av.id_avaliacao AS id, av.titulo, av.tipo, av.bimestre, av.data_avaliacao AS data, av.peso, n.valor AS nota
+                 FROM avaliacao av LEFT JOIN nota n ON n.id_avaliacao = av.id_avaliacao AND n.id_aluno = ?
+                WHERE av.id_turma_disciplina = ? ORDER BY av.bimestre, av.data_avaliacao""",
+            (id_aluno, td["id"]),
+        )
+        bimestres: dict[str, float | None] = {}
+        for b in range(1, 5):
+            lanc = [a for a in avs if a["bimestre"] == b and a["nota"] is not None]
+            peso = sum(a["peso"] for a in lanc)
+            bimestres[str(b)] = _arred1(sum(a["nota"] * a["peso"] for a in lanc) / peso) if peso else None
+        medias = [v for v in bimestres.values() if v is not None]
+        parcial = _arred1(sum(medias) / len(medias)) if medias else None
+        aulas = scalar("SELECT COUNT(*) FROM frequencia WHERE id_aluno = ? AND id_turma_disciplina = ?", (id_aluno, td["id"])) or 0
+        faltas_ = scalar("SELECT COUNT(*) FROM frequencia WHERE id_aluno = ? AND id_turma_disciplina = ? AND presente = 0", (id_aluno, td["id"])) or 0
+        freq = None if not aulas else round(100.0 * (aulas - faltas_) / aulas, 1)
+        if freq is not None and aulas >= cfg["MIN_AULAS_PARA_FALTA"] and freq < cfg["FREQUENCIA_MINIMA"]:
+            situacao = "Reprovado por faltas"
+        elif parcial is None:
+            situacao = "Sem nota"
+        else:
+            situacao = "Aprovado" if parcial >= cfg["MEDIA_APROVACAO"] else "Recuperação"
+        disciplinas.append({
+            "idTurmaDisciplina": td["id"], "materia": td["materia"], "professor": td["professor"],
+            "bimestres": bimestres, "mediaParcial": parcial, "aulas": aulas, "faltas": faltas_, "frequencia": freq,
+            "situacao": situacao, "avaliacoes": avs,
+        })
+    parciais = [d["mediaParcial"] for d in disciplinas if d["mediaParcial"] is not None]
+    aulas_t = sum(d["aulas"] for d in disciplinas)
+    faltas_t = sum(d["faltas"] for d in disciplinas)
+    return {
+        "aluno": aluno, "bimestreAtual": cfg["BIMESTRE_ATUAL"], "mediaAprovacao": cfg["MEDIA_APROVACAO"],
+        "frequenciaMinima": cfg["FREQUENCIA_MINIMA"], "disciplinas": disciplinas,
+        "mediaGeral": _arred1(sum(parciais) / len(parciais)) if parciais else None,
+        "faltasTotal": faltas_t,
+        "frequenciaGeral": None if not aulas_t else round(100.0 * (aulas_t - faltas_t) / aulas_t, 1),
+    }
+
+
 def media_geral(linhas: list[dict]) -> float | None:
     notas = [l["nota"] for l in linhas if l["nota"] is not None]
     return _arred1(sum(notas) / len(notas)) if notas else None

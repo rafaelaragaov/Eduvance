@@ -1,5 +1,5 @@
 """Listas auxiliares para os formulários (selects)."""
-from flask import Blueprint, g, jsonify
+from flask import Blueprint, g, jsonify, request
 
 from ..db import rows
 from ..security import auth_required
@@ -40,4 +40,30 @@ def turma_disciplinas():
               {filtro}
              ORDER BY td.id_turma_disciplina""",
         (u["id"],) if filtro else (),
+    ))
+
+
+@bp.get("/alunos")
+@auth_required("PROFESSOR", "COORDENADOR", "ADMIN")
+def alunos():
+    """Alunos que o usuário pode consultar (professor: das suas turmas). Filtros: idTurma, busca."""
+    u = g.user
+    where, params = [], []
+    if u["perfil"] == "PROFESSOR":
+        where.append("a.id_turma IN (SELECT id_turma FROM turma_disciplina WHERE id_professor = ?)")
+        params.append(u["id"])
+    id_turma = request.args.get("idTurma", type=int)
+    if id_turma:
+        where.append("a.id_turma = ?")
+        params.append(id_turma)
+    busca = (request.args.get("busca") or "").strip()
+    if busca:
+        where.append("(us.nome LIKE ? OR a.matricula LIKE ?)")
+        params += [f"%{busca}%", f"%{busca}%"]
+    return jsonify(rows(
+        f"""SELECT a.id_aluno AS id, us.nome, a.matricula, t.id_turma AS idTurma, t.nome AS turma
+              FROM aluno a JOIN usuario us ON us.id_usuario = a.id_aluno LEFT JOIN turma t ON t.id_turma = a.id_turma
+             {"WHERE " + " AND ".join(where) if where else ""}
+             ORDER BY t.nome, us.nome LIMIT 200""",
+        params,
     ))

@@ -17,9 +17,9 @@ def create_app(config: dict | None = None) -> Flask:
     app.teardown_appcontext(fechar_db)
     registrar_handlers(app)
 
-    from .routes import atividades, auth, avaliacoes, catalogo, dashboard, frequencia, notas, usuarios, vestibular
+    from .routes import atividades, auth, avaliacoes, boletim, catalogo, dashboard, frequencia, notas, usuarios, vestibular
 
-    for m in (auth, usuarios, catalogo, atividades, avaliacoes, frequencia, notas, vestibular, dashboard):
+    for m in (auth, usuarios, catalogo, atividades, avaliacoes, boletim, frequencia, notas, vestibular, dashboard):
         app.register_blueprint(m.bp)
 
     @app.get("/api/health")
