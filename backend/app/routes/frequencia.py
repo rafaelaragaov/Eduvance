@@ -11,6 +11,7 @@ from ..db import one, rows, transacao
 from ..errors import ApiError, Corpo
 from ..security import auth_required
 from ..services.acesso import pode_gerir_turma_disciplina
+from ..services.comunicacao import notificar, responsaveis_do_aluno
 
 bp = Blueprint("frequencia", __name__, url_prefix="/api/frequencia")
 
@@ -115,6 +116,8 @@ def registrar():
         raise ApiError(400, f"Informe a presença de todos os alunos da turma (faltam {faltando})",
                        [{"campo": "registros", "mensagem": f"Faltam {faltando} aluno(s) na chamada"}])
 
+    min_aulas = current_app.config["MIN_AULAS_PARA_FALTA"]
+    antes = {a["idAluno"]: a["abaixoDoMinimo"] and a["aulas"] >= min_aulas for a in _dia(td, data)["alunos"]}
     with transacao() as con:
         for ida, pres in marcados.items():
             con.execute(
@@ -123,5 +126,16 @@ def registrar():
                 (ida, td["id"], data, 1 if pres else 0),
             )
     resultado = _dia(td, data)
+    # Sprint 05: quem acabou de cair abaixo do mínimo de frequência avisa o aluno e os responsáveis (uma vez, na transição)
+    alertados = 0
+    for a in resultado["alunos"]:
+        if a["abaixoDoMinimo"] and not antes.get(a["idAluno"]) and a["aulas"] >= min_aulas:
+            alertados += notificar(
+                [a["idAluno"], *responsaveis_do_aluno(a["idAluno"])], "FREQUENCIA",
+                f"Frequência abaixo do mínimo — {td['disciplina']}",
+                f"{a['nome']} está com {a['frequencia']:.1f}% de presença em {td['disciplina']}; o mínimo exigido é {current_app.config['FREQUENCIA_MINIMA']:g}%.",
+                "/boletim",
+            )
+    resultado["alertas"] = alertados
     resultado["resumo"] = {"presentes": sum(marcados.values()), "faltas": len(marcados) - sum(marcados.values())}
     return jsonify(resultado)
