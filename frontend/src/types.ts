@@ -232,3 +232,57 @@ export interface BoletimCompleto {
 }
 
 export interface AlunoCatalogo { id: number; nome: string; matricula: string; idTurma: number | null; turma: string | null }
+
+// ---------- Módulo Comunicação Escolar (Sprint 05) ----------
+export type PublicoComunicado = 'TODOS' | 'ALUNOS' | 'RESPONSAVEIS' | 'PROFESSORES' | 'TURMA';
+
+export interface Comunicado {
+  id: number;
+  titulo: string;
+  mensagem: string;
+  dataPublicacao: string;
+  publico: PublicoComunicado;
+  idTurma: number | null;
+  turma: string | null;
+  idAutor: number | null;
+  autor: string;
+  perfilAutor: Perfil | null;
+  lido: boolean;
+  podeAlterar: boolean;
+  notificados?: number;
+}
+
+export type TipoOcorrencia = 'DISCIPLINAR' | 'PEDAGOGICA' | 'SAUDE' | 'ELOGIO';
+export type GravidadeOcorrencia = 'LEVE' | 'MEDIA' | 'GRAVE';
+export type StatusOcorrencia = 'ABERTA' | 'EM_ANALISE' | 'RESOLVIDA';
+
+export interface Ocorrencia {
+  id: number;
+  idAluno: number;
+  aluno: string;
+  turma: string | null;
+  matricula: string;
+  idProfessor: number | null;
+  professor: string | null;
+  titulo: string;
+  descricao: string;
+  tipo: TipoOcorrencia;
+  gravidade: GravidadeOcorrencia;
+  status: StatusOcorrencia;
+  data: string;
+  parecer: string | null;
+  resolvidaEm: string | null;
+  podeEditar: boolean;
+  podeAlterarStatus: boolean;
+  historico?: { id: number; statusAnterior: StatusOcorrencia | null; statusNovo: StatusOcorrencia; comentario: string | null; data: string; usuario: string }[];
+}
+
+export interface Notificacao {
+  id: number;
+  tipo: 'COMUNICADO' | 'OCORRENCIA' | 'FREQUENCIA';
+  titulo: string;
+  mensagem: string;
+  link: string | null;
+  lida: boolean;
+  criadaEm: string;
+}

@@ -2,6 +2,8 @@ import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, u
 import { api, ApiError } from './api';
 import { iniciais, mesAno } from './format';
 import { Icon } from './icons';
+import { Link, navigate } from './router';
+import type { Notificacao } from './types';
 
 // ---------- Marca ----------------------------------------------------------
 export function Logo({ size = 32, texto = true }: { size?: number; texto?: boolean }) {
@@ -58,8 +60,69 @@ export function Avatar({ nome, size = 40 }: { nome: string; size?: number }) {
   );
 }
 
+/** Avisa o sino do cabeçalho que as notificações mudaram (ex.: depois de publicar ou resolver algo). */
+export const avisarNotificacoes = () => window.dispatchEvent(new Event('eduvance:notificacoes'));
+
+/** Sino com contador de não lidas e lista das mais recentes (PB21). */
+export function SinoNotificacoes() {
+  const [aberto, setAberto] = useState(false);
+  const [naoLidas, setNaoLidas] = useState(0);
+  const [itens, setItens] = useState<Notificacao[]>([]);
+  const ref = useRef<HTMLDivElement>(null);
+
+  const carregar = useCallback(() => {
+    api<{ naoLidas: number; itens: Notificacao[] }>('/notificacoes?limite=5')
+      .then((r) => { setNaoLidas(r.naoLidas); setItens(r.itens); })
+      .catch(() => { /* o sino não deve atrapalhar a tela quando a API cai */ });
+  }, []);
+
+  useEffect(() => {
+    carregar();
+    const t = setInterval(carregar, 30000);
+    window.addEventListener('eduvance:notificacoes', carregar);
+    return () => { clearInterval(t); window.removeEventListener('eduvance:notificacoes', carregar); };
+  }, [carregar]);
+
+  useEffect(() => {
+    if (!aberto) return;
+    const fora = (e: MouseEvent) => { if (!ref.current?.contains(e.target as Node)) setAberto(false); };
+    const esc = (e: KeyboardEvent) => e.key === 'Escape' && setAberto(false);
+    document.addEventListener('mousedown', fora);
+    document.addEventListener('keydown', esc);
+    return () => { document.removeEventListener('mousedown', fora); document.removeEventListener('keydown', esc); };
+  }, [aberto]);
+
+  async function abrir(n: Notificacao) {
+    setAberto(false);
+    if (!n.lida) await api(`/notificacoes/${n.id}/lida`, { method: 'PUT' }).catch(() => undefined);
+    carregar();
+    if (n.link) navigate(n.link);
+  }
+
+  return (
+    <div className="sino" ref={ref}>
+      <button className="icon-btn" aria-label={naoLidas ? `Notificações (${naoLidas} não lidas)` : 'Notificações'} title="Notificações" aria-expanded={aberto} onClick={() => { setAberto((a) => !a); carregar(); }}>
+        <Icon name="bell" size={18} />
+        {naoLidas > 0 && <span className="sino-badge">{naoLidas > 9 ? '9+' : naoLidas}</span>}
+      </button>
+      {aberto && (
+        <div className="sino-menu" role="menu">
+          <div className="sino-head"><strong>Notificações</strong>{naoLidas > 0 && <span className="chip">{naoLidas} nova{naoLidas > 1 ? 's' : ''}</span>}</div>
+          {itens.length === 0 && <p className="empty" style={{ margin: 12 }}>Você não tem notificações.</p>}
+          {itens.map((n) => (
+            <button key={n.id} role="menuitem" className={`sino-item ${n.lida ? '' : 'nova'}`} onClick={() => abrir(n)}>
+              <strong>{n.titulo}</strong>
+              <span>{n.mensagem}</span>
+            </button>
+          ))}
+          <Link to="/notificacoes" className="sino-todas" onClick={() => setAberto(false)}>Ver todas as notificações</Link>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function PageHeader({ titulo, subtitulo, extra }: { titulo: string; subtitulo?: string; extra?: ReactNode }) {
-  const toast = useToast();
   return (
     <header className="page-header">
       <div>
@@ -68,9 +131,7 @@ export function PageHeader({ titulo, subtitulo, extra }: { titulo: string; subti
       </div>
       <div className="page-header-tools">
         {extra}
-        <button className="icon-btn" aria-label="Notificações" title="Notificações" onClick={() => toast('Central de notificações prevista para uma próxima Sprint (PB21).', 'info')}>
-          <Icon name="bell" size={18} />
-        </button>
+        <SinoNotificacoes />
         <span className="date-pill"><Icon name="calendar" size={16} />{mesAno()}</span>
       </div>
     </header>

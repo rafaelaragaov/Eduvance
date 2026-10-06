@@ -3,7 +3,7 @@ const MESES_ABREV = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SE
 
 const pad = (n: number) => String(n).padStart(2, '0');
 /** Datas vindas do servidor são horário local sem fuso (ex.: 2026-10-05T23:59:00). */
-export const parse = (s: string) => new Date(s.length === 10 ? `${s}T00:00:00` : s);
+export const parse = (s: string) => new Date(s.length === 10 ? `${s}T00:00:00` : s.replace(' ', 'T'));
 const mesmoDia = (a: Date, b: Date) => a.toDateString() === b.toDateString();
 const diasEntre = (a: Date, b: Date) => Math.round((new Date(a.getFullYear(), a.getMonth(), a.getDate()).getTime() - new Date(b.getFullYear(), b.getMonth(), b.getDate()).getTime()) / 864e5);
 
