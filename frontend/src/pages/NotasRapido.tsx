@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { api, ApiError } from '../api';
+import { Link } from '../router';
 import type { NotasTurma, TurmaDisciplina } from '../types';
 import { Card, Empty, ErrorBox, Loading, useToast } from '../ui';
 
@@ -65,7 +66,7 @@ export default function NotasRapido({ completo = false, titulo = 'Lançamento de
   );
 
   return (
-    <Card title={titulo} action={seletor || undefined}>
+    <Card title={titulo} action={<span style={{ display: 'flex', gap: 12, alignItems: 'center' }}>{seletor || undefined}<Link to="/notas" className="card-link">Todas as avaliações</Link></span>}>
       {erro && <ErrorBox erro={erro} />}
       {carregando && <Loading />}
       {!carregando && !erro && !tds.length && <Empty>Nenhuma turma vinculada ao seu perfil.</Empty>}

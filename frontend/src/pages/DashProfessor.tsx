@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { api } from '../api';
 import { useAuth } from '../auth';
-import { navigate } from '../router';
+import { Link, navigate } from '../router';
 import type { DashProfessor as D, TurmaDisciplina } from '../types';
 import { Badge, Card, Empty, ErrorBox, Loading, PageHeader, Tone, useApi } from '../ui';
 import AtividadeForm from './AtividadeForm';
@@ -30,6 +30,7 @@ export default function DashProfessor() {
                 <header><h3>{t.turma}</h3><span className="chip">{t.disciplina}</span></header>
                 <p>{t.alunos} alunos</p>
                 <p className="muted">Próxima Aula: {t.proximaAula ?? 'sem horário'}</p>
+                <p><Link to="/frequencia" className="card-link">Fazer chamada</Link> · <Link to="/avaliacoes" className="card-link">Avaliações</Link></p>
               </div>
             ))}
             {!d.turmas.length && <Card><Empty>Você ainda não está vinculado a nenhuma turma.</Empty></Card>}
