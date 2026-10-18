@@ -1,0 +1,33 @@
+• Tabelas criadas a partir de schema.postgresql.sql (PostgreSQL)
+✔ Migração concluída: 31 tabelas, 1291 linhas conferidas.
+  usuario                     119
+  turma                         4
+  disciplina                    6
+  simulado                      2
+  aluno                       110
+  responsavel                   2
+  professor                     5
+  coordenador                   1
+  comunicado                    4
+  notificacao                 372
+  evento                       16
+  preferencia_usuario           0
+  material                      2
+  forum                         2
+  aluno_responsavel             3
+  turma_disciplina             18
+  comunicado_leitura            3
+  ocorrencia                    6
+  mensalidade                   4
+  resultado_simulado            3
+  redacao                       1
+  post_forum                   20
+  recomendacao_ia               4
+  horario                      90
+  conteudo                      0
+  atividade                     7
+  avaliacao                    62
+  frequencia                  360
+  ocorrencia_historico         11
+  entrega_atividade             0
+  nota                         54

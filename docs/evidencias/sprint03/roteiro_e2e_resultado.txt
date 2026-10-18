@@ -1,0 +1,23 @@
+LOGIN — mensagem genérica e entrada por matrícula
+  ✔ credenciais erradas: mensagem genérica — "Credenciais inválidas"
+  ✔ aluno entra com a matrícula e vê o próprio dashboard
+  ✔ sem erros de JavaScript
+ADMIN — cadastra um aluno pela interface e o aluno entra com a matrícula nova
+  ✔ validação: formulário vazio mostra erros nos campos
+  ✔ CREATE: usuário cadastrado
+  ✔ READ: aluno novo aparece na lista (busca por matrícula)
+  ✔ aluno recém-cadastrado entra com a própria matrícula
+  ✔ RBAC na interface: aluno em /usuarios vê "Acesso restrito"
+PROFESSOR — CRUD de atividades (criar, validar, editar, persistir, excluir)
+  ✔ validação: título obrigatório — "Título é obrigatório"
+  ✔ CREATE: atividade publicada
+  ✔ UPDATE: a edição permanece após recarregar a página (persistência)
+  ✔ DELETE: atividade excluída depois da confirmação
+  ✔ sem erros de JavaScript
+ALUNO e RESPONSÁVEL — papéis na mesma tela de atividades
+  ✔ aluno não vê "Nova atividade"
+  ✔ aluno marca a entrega de "Exercícios de Trigonometria"
+  ✔ e desfaz a entrega (estado restaurado)
+  ✔ responsável só consulta (sem botões de ação)
+
+17/17 verificações aprovadas

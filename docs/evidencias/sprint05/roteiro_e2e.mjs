@@ -16,7 +16,7 @@ async function entrar(ident, senha = 'senha123', vp = { width: 1440, height: 900
 const shot = (p, f) => p.screenshot({ path: `${out}/${f}.png` });
 const ano = new Date().getFullYear();
 const sino = (p) => p.locator('.page-header-tools .sino');
-const badge = async (p) => { const b = sino(p).locator('.sino-badge'); return (await b.count()) ? Number((await b.textContent()).replace('+', '')) : 0; };
+const badge = async (p) => { await p.waitForLoadState('networkidle'); const b = sino(p).locator('.sino-badge'); return (await b.count()) ? Number((await b.textContent()).replace('+', '')) : 0; };
 const tokens = {};
 const api = async (ident, senha, path, method = 'GET', body) => {
   if (!tokens[ident]) {

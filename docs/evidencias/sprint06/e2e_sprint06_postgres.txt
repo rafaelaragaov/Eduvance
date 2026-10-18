@@ -1,0 +1,63 @@
+ALUNO — dashboard, agenda, provas e calendário
+  ✔ dashboard mostra "Próximos compromissos" (provas, entregas, eventos)
+  ✔ dashboard mostra "Recomendações de estudo" cruzando notas, faltas e agenda
+  ✔ há recomendação de PROVA (cruza a agenda de provas com a média da disciplina)
+  ✔ a origem da recomendação é informada: Gerado por: Motor de regras
+  ✔ navegação: menu Agenda
+  ✔ título da aba muda por página: Agenda · Eduvance
+  ✔ grade semanal exibida
+  ✔ navegar para a semana seguinte altera o período
+  ✔ "Hoje" volta para a semana atual
+  ✔ filtro: desmarcar "Aulas" oculta as aulas
+  ✔ API de provas devolve 5 avaliações futuras
+  ✔ calendário de provas lista todas as próximas avaliações
+  ✔ RBAC na interface: aluno não vê "Remarcar"
+  ✔ aba "Realizadas" mostra a nota do aluno em cada prova
+  ✔ calendário: clicar no dia abre o painel do dia
+  ✔ RBAC na interface: aluno não vê "Novo evento"
+  ✔ sem erros de JavaScript no navegador (aluno)
+PROFESSOR — remarca avaliação e avisa a turma (integração Agenda × Comunicação × Notas)
+  ✔ validação: mesma data é recusada
+  ✔ validação: fim de semana é recusado
+  ✔ avaliação remarcada: Avaliação remarcada! 30 pessoa(s) avisada(s).
+  ✔ a nova data foi gravada no banco (2026-11-17)
+  ✔ aluno recebeu notificação da remarcação
+  ✔ notificação do tipo AGENDA ("remarcada") aponta para /provas
+  ✔ API: remarcar para a mesma data → 400
+COORDENADORA — calendário escolar (CRUD de eventos) e regras de conflito
+  ✔ validação: título muito curto
+  ✔ CREATE: Evento cadastrado — 110 pessoa(s) avisada(s).
+  ✔ CREATE: evento aparece no painel do dia
+  ✔ erro do servidor: evento duplicado é recusado (Evento repetido)
+  ✔ UPDATE: evento editado
+  ✔ regra: recesso sobre dia com avaliação é recusado — Existem avaliações marcadas neste período
+  ✔ integração: aluno foi notificado do evento (público ALUNOS)
+  ✔ integração: responsável NÃO foi notificado (público era só ALUNOS)
+  ✔ DELETE: evento cancelado
+  ✔ sem erros de JavaScript no navegador (coordenação)
+RESPONSÁVEL — agenda e recomendações dos filhos
+  ✔ responsável vê as recomendações do filho selecionado
+  ✔ responsável com mais de um filho vê o filtro por aluno (3 opções)
+CONFIGURAÇÕES — tamanho da fonte e tema
+  ✔ fonte padrão = 100%
+  ✔ A+ duas vezes → 130%
+  ✔ o texto da tela cresce de verdade (28.0px → 36.4px)
+  ✔ em 150% a página não ganha rolagem horizontal
+  ✔ A− é desabilitado no menor tamanho (85%)
+  ✔ a escolha sobrevive ao recarregar a página (localStorage)
+  ✔ tema escuro aplicado
+  ✔ preferências seguem a conta: novo navegador já abre em 115% e tema escuro
+  ✔ "Restaurar padrões" volta para 100%
+MOBILE — navegação e legibilidade
+  ✔ menu "Mais" oferece Configurações
+  ✔ mobile em 130%: sem rolagem horizontal
+  ✔ mobile: a semana vira uma coluna só
+CONTROLE DE ACESSO (API)
+  ✔ aluno não cria eventos (403)
+  ✔ aluno não remarca avaliação (403)
+  ✔ professor não remarca avaliação de outro professor (403)
+  ✔ responsável não consulta a agenda de aluno que não é seu filho (403)
+  ✔ agenda exige autenticação (401)
+  ✔ aluno não vê recomendações de outro aluno (403)
+
+54/54 verificações aprovadas

@@ -1,0 +1,23 @@
+test_atividade_vencendo_ou_atrasada (recomendacao.tests.test_motor.TestMotor.test_atividade_vencendo_ou_atrasada) ... ok
+test_entrada_vazia_nao_quebra (recomendacao.tests.test_motor.TestMotor.test_entrada_vazia_nao_quebra) ... ok
+test_faltas_em_tres_faixas (recomendacao.tests.test_motor.TestMotor.test_faltas_em_tres_faixas) ... ok
+test_frequencia_baixa_por_disciplina_respeita_minimo_de_aulas (recomendacao.tests.test_motor.TestMotor.test_frequencia_baixa_por_disciplina_respeita_minimo_de_aulas) ... ok
+test_media_abaixo_da_aprovacao_gera_reforco_alto (recomendacao.tests.test_motor.TestMotor.test_media_abaixo_da_aprovacao_gera_reforco_alto) ... ok
+test_media_alta_vira_destaque (recomendacao.tests.test_motor.TestMotor.test_media_alta_vira_destaque) ... ok
+test_media_proxima_do_minimo_gera_atencao_media (recomendacao.tests.test_motor.TestMotor.test_media_proxima_do_minimo_gera_atencao_media) ... ok
+test_ordenacao_limite_e_nivel_de_atencao (recomendacao.tests.test_motor.TestMotor.test_ordenacao_limite_e_nivel_de_atencao) ... ok
+test_parametros_personalizados (recomendacao.tests.test_motor.TestMotor.test_parametros_personalizados) ... ok
+test_prova_cruza_agenda_com_notas (recomendacao.tests.test_motor.TestMotor.test_prova_cruza_agenda_com_notas) ... ok
+test_prova_fora_da_janela_ou_passada_e_ignorada (recomendacao.tests.test_motor.TestMotor.test_prova_fora_da_janela_ou_passada_e_ignorada) ... ok
+test_prova_mais_proxima_pesa_mais (recomendacao.tests.test_motor.TestMotor.test_prova_mais_proxima_pesa_mais) ... ok
+test_queda_de_notas_exige_tres_avaliacoes (recomendacao.tests.test_motor.TestMotor.test_queda_de_notas_exige_tres_avaliacoes) ... ok
+test_saida_e_deterministica (recomendacao.tests.test_motor.TestMotor.test_saida_e_deterministica) ... ok
+test_health (recomendacao.tests.test_servico.TestServico.test_health) ... skipped 'fastapi não instalado'
+test_openapi_documenta_o_contrato (recomendacao.tests.test_servico.TestServico.test_openapi_documenta_o_contrato) ... skipped 'fastapi não instalado'
+test_recomendar (recomendacao.tests.test_servico.TestServico.test_recomendar) ... skipped 'fastapi não instalado'
+test_validacao_rejeita_nota_fora_da_faixa (recomendacao.tests.test_servico.TestServico.test_validacao_rejeita_nota_fora_da_faixa) ... skipped 'fastapi não instalado'
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.002s
+
+OK (skipped=4)

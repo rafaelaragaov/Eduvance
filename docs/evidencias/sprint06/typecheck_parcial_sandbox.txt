@@ -1,0 +1,106 @@
+VERIFICAÇÃO DE TIPOS — execução PARCIAL no ambiente de desenvolvimento (sandbox)
+==================================================================================
+IMPORTANTE: este NÃO é o `npm run typecheck` oficial. O ambiente onde o código é escrito não
+consegue baixar `@types/react` (registro npm bloqueado para esse pacote). Para ainda assim
+checar o restante do código, rodou-se `tsc --noEmit` com declarações mínimas de React escritas
+à mão ("stubs"). Os erros abaixo vêm dessas declarações simplificadas, não do código do projeto:
+
+  TS7006 (73x)  "Parameter 'e' implicitly has an 'any' type"  -> o stub não tipa eventos do React
+  TS2882 (1x)   import './styles.css'                         -> declaração de CSS ausente no stub
+  TS2614 (1x)   'Fragment' não exportado                      -> stub incompleto
+  TS2322 (1x)   prop 'key' em componente                      -> stub não conhece 'key'
+  TS2554 (1x)   useState<string | undefined>() sem argumento  -> válido no React real (overload)
+  TS2339 (5x)   MouseEvent.button/metaKey/...                 -> stub não tipa MouseEvent
+  TS2345 (2x)   useRef<HTMLDivElement>(null)                  -> válido no React real
+
+Nenhum erro de tipos do próprio domínio (types.ts, chamadas à API, props de páginas) apareceu.
+A execução REAL, com os tipos oficiais, é feita na máquina do grupo por `verificar.bat`
+(gera docs/evidencias/sprint06/verificacao_pc.txt com a saída de `npm run typecheck`).
+
+Saída bruta do tsc com stubs:
+----------------------------------------------------------------------------------
+frontend/src/Shell.tsx(133,27): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/Shell.tsx(174,44): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/main.tsx(4,8): error TS2882: Cannot find module or type declarations for side-effect import of './styles.css'.
+frontend/src/pages/Agenda.tsx(69,48): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Agenda.tsx(75,48): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/AtividadeForm.tsx(59,54): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/AtividadeForm.tsx(63,50): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/AtividadeForm.tsx(68,41): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/AtividadeForm.tsx(73,65): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Atividades.tsx(72,126): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Avaliacoes.tsx(57,54): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Avaliacoes.tsx(61,43): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Avaliacoes.tsx(64,47): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Avaliacoes.tsx(69,54): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Avaliacoes.tsx(72,74): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Avaliacoes.tsx(76,39): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Avaliacoes.tsx(121,40): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Boletim.tsx(1,10): error TS2614: Module '"react"' has no exported member 'Fragment'. Did you mean to use 'import Fragment from "react"' instead?
+frontend/src/pages/Boletim.tsx(21,139): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Calendario.tsx(77,100): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Calendario.tsx(80,43): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Calendario.tsx(83,89): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Calendario.tsx(90,67): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Calendario.tsx(97,92): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Calendario.tsx(98,119): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Calendario.tsx(102,113): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Calendario.tsx(103,106): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Calendario.tsx(106,133): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Comunicados.tsx(64,54): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Comunicados.tsx(67,56): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Comunicados.tsx(71,78): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Comunicados.tsx(77,69): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Comunicados.tsx(159,88): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/DashResponsavel.tsx(67,40): error TS2322: Type '{ key: number; idAluno: number; }' is not assignable to type '{ idAluno?: number | undefined; }'.
+  Property 'key' does not exist on type '{ idAluno?: number | undefined; }'.
+frontend/src/pages/Frequencia.tsx(68,70): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Login.tsx(66,121): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Login.tsx(76,137): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Notas.tsx(148,30): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/NotasRapido.tsx(63,41): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/NotasRapido.tsx(87,28): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/NotasRapido.tsx(88,31): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Ocorrencias.tsx(77,101): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Ocorrencias.tsx(78,46): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Ocorrencias.tsx(85,54): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Ocorrencias.tsx(88,57): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Ocorrencias.tsx(92,43): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Ocorrencias.tsx(95,77): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Ocorrencias.tsx(100,70): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Ocorrencias.tsx(182,67): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Ocorrencias.tsx(239,46): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Ocorrencias.tsx(242,97): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Provas.tsx(26,29): error TS2554: Expected 1 arguments, but got 0.
+frontend/src/pages/Provas.tsx(55,89): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Provas.tsx(57,72): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Provas.tsx(116,48): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Provas.tsx(122,45): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Provas.tsx(127,47): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Usuarios.tsx(86,83): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Usuarios.tsx(91,58): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Usuarios.tsx(96,109): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Usuarios.tsx(98,107): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Usuarios.tsx(100,61): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Usuarios.tsx(108,65): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Usuarios.tsx(110,130): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Usuarios.tsx(114,52): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Usuarios.tsx(119,109): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Usuarios.tsx(125,64): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Usuarios.tsx(130,78): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Usuarios.tsx(140,141): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Usuarios.tsx(141,167): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Usuarios.tsx(142,132): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Usuarios.tsx(194,124): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Vestibular.tsx(35,100): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Vestibular.tsx(37,46): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/Vestibular.tsx(56,61): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/pages/academico.tsx(20,38): error TS7006: Parameter 'e' implicitly has an 'any' type.
+frontend/src/router.tsx(30,11): error TS2339: Property 'defaultPrevented' does not exist on type 'MouseEvent<HTMLAnchorElement>'.
+frontend/src/router.tsx(30,33): error TS2339: Property 'button' does not exist on type 'MouseEvent<HTMLAnchorElement>'.
+frontend/src/router.tsx(30,51): error TS2339: Property 'metaKey' does not exist on type 'MouseEvent<HTMLAnchorElement>'.
+frontend/src/router.tsx(30,64): error TS2339: Property 'ctrlKey' does not exist on type 'MouseEvent<HTMLAnchorElement>'.
+frontend/src/router.tsx(30,77): error TS2339: Property 'shiftKey' does not exist on type 'MouseEvent<HTMLAnchorElement>'.
+frontend/src/ui.tsx(71,38): error TS2345: Argument of type 'null' is not assignable to parameter of type 'HTMLDivElement'.
+frontend/src/ui.tsx(171,38): error TS2345: Argument of type 'null' is not assignable to parameter of type 'HTMLDivElement'.
+frontend/src/ui.tsx(179,51): error TS7006: Parameter 'e' implicitly has an 'any' type.

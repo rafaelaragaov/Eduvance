@@ -22,7 +22,7 @@ console.log('LOGIN — tema do sistema e botão');
   await p.screenshot({ path: `${out}/login-escuro.png` });
   await p.reload(); await p.waitForSelector('.login-card');
   ok(await tema(p) === 'dark', 'escolha persiste após recarregar');
-  ok(await p.evaluate(() => localStorage.getItem('eduvance:tema')) === 'dark', 'preferência salva no navegador');
+  ok(await p.evaluate(() => JSON.parse(localStorage.getItem('eduvance:prefs') || '{}').tema) === 'escuro', 'preferência salva no navegador');
   await ctx.close();
 }
 {
@@ -31,10 +31,11 @@ console.log('LOGIN — tema do sistema e botão');
   ok(await tema(p) === 'dark', 'sistema escuro → tema escuro sem escolha salva');
   await p.emulateMedia({ colorScheme: 'light' }); await p.waitForTimeout(150);
   ok(await tema(p) === 'light', 'acompanha o sistema quando não há escolha salva');
+  // o botão alterna o tema que a pessoa está vendo (aqui: claro → escuro e de volta)
   await p.click('[data-testid=tema]'); await p.emulateMedia({ colorScheme: 'dark' }); await p.waitForTimeout(150);
-  ok(await tema(p) === 'dark', 'após escolher, a preferência manda (escuro)');
-  await p.click('[data-testid=tema]'); await p.emulateMedia({ colorScheme: 'dark' }); await p.waitForTimeout(150);
-  ok(await tema(p) === 'light', 'escolha manual (claro) vence o sistema escuro');
+  ok(await tema(p) === 'light', 'após escolher (claro), a preferência manda mesmo com o sistema escuro');
+  await p.click('[data-testid=tema]'); await p.emulateMedia({ colorScheme: 'light' }); await p.waitForTimeout(150);
+  ok(await tema(p) === 'dark', 'escolha manual (escuro) vence o sistema claro');
   await ctx.close();
 }
 
