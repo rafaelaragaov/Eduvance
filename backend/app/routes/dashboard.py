@@ -1,10 +1,13 @@
 """Dashboards por perfil (PB09) e resumo do aluno para o responsável."""
+from datetime import date
+
 from flask import Blueprint, current_app, g, jsonify
 
 from ..db import one, rows
 from ..errors import nao_encontrado, proibido
 from ..security import auth_required
 from ..services import academico as ac
+from ..services import agenda as ag
 from ..services import comunicacao as cm
 from ..services.acesso import alunos_vinculados, pode_ver_aluno
 
@@ -21,7 +24,11 @@ def dashboard():
         "COORDENADOR": lambda _id: _coordenador(),
         "RESPONSAVEL": _responsavel,
     }.get(u["perfil"], lambda _id: _admin())
-    return jsonify(fn(u["id"]))
+    dados = fn(u["id"])
+    # Sprint 06: todos os dashboards mostram os próximos compromissos (provas, entregas, eventos) e avisam dia sem aula
+    dados["compromissos"] = ag.proximos(u)
+    dados["semAulaHoje"] = ag.bloqueio(date.today().isoformat())
+    return jsonify(dados)
 
 
 @bp.get("/alunos/<int:id_>/resumo")

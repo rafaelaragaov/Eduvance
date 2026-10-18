@@ -131,6 +131,9 @@ def _status_aula(inicio: str, fim: str, agora: datetime) -> str:
 
 def aulas_do_dia(turma_id: int | None = None, professor_id: int | None = None, agora: datetime | None = None) -> list[dict]:
     agora = agora or datetime.now()
+    from .agenda import bloqueio   # Sprint 06: feriado/recesso do calendário escolar suspende as aulas do dia
+    if bloqueio(agora.date().isoformat()):
+        return []
     where, params = ["h.dia_semana = ?"], [agora.isoweekday()]
     if turma_id:
         where.append("td.id_turma = ?")

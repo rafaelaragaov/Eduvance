@@ -152,7 +152,7 @@ def registrar():
 
     quando = f"{d['dataOcorrencia']}T{datetime.now():%H:%M:%S}" if d.get("dataOcorrencia") else datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
     dia = quando[:10]
-    if one("SELECT 1 FROM ocorrencia WHERE id_aluno = ? AND lower(titulo) = lower(?) AND substr(data_ocorrencia,1,10) = ? AND id_professor IS ?",
+    if one("SELECT 1 FROM ocorrencia WHERE id_aluno = ? AND lower(titulo) = lower(?) AND date(data_ocorrencia) = ? AND id_professor IS ?",
            (d["idAluno"], d["titulo"], dia, u["id"] if u["perfil"] == "PROFESSOR" else None)):
         raise ApiError(409, "Esta ocorrência já foi registrada para o aluno nesta data",
                        [{"campo": "titulo", "mensagem": "Já existe uma ocorrência com este título para o aluno no mesmo dia"}])

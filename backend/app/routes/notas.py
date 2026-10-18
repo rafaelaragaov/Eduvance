@@ -12,13 +12,14 @@ bp = Blueprint("notas", __name__, url_prefix="/api/notas")
 @bp.get("/turma-disciplina/<int:id_td>")
 @auth_required("PROFESSOR", "COORDENADOR", "ADMIN")
 def da_turma(id_td):
-    """Avaliação mais recente (preferindo o bimestre atual) e as notas dos alunos da turma."""
+    """Avaliação mais recente já realizada (preferindo o bimestre atual) e as notas dos alunos da turma.
+    Sprint 06: avaliações marcadas para o futuro (calendário de provas) só são escolhidas quando não há outra."""
     if not pode_gerir_turma_disciplina(g.user, id_td):
         raise proibido()
     av = one(
         """SELECT id_avaliacao AS id, titulo, data_avaliacao AS data, bimestre
              FROM avaliacao WHERE id_turma_disciplina = ?
-            ORDER BY (bimestre = ?) DESC, data_avaliacao DESC LIMIT 1""",
+            ORDER BY (data_avaliacao <= date('now','localtime')) DESC, (bimestre = ?) DESC, data_avaliacao DESC LIMIT 1""",
         (id_td, current_app.config["BIMESTRE_ATUAL"]),
     )
     if not av:

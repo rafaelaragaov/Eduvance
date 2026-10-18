@@ -88,7 +88,7 @@ def obter(id_):
 @auth_required()
 def marcar_lido(id_):
     _visivel(id_)
-    execute("INSERT OR IGNORE INTO comunicado_leitura (id_comunicado, id_usuario) VALUES (?,?)", (id_, g.user["id"]))
+    execute("INSERT INTO comunicado_leitura (id_comunicado, id_usuario) VALUES (?,?) ON CONFLICT DO NOTHING", (id_, g.user["id"]))
     return jsonify(_visivel(id_))
 
 

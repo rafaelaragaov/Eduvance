@@ -4,6 +4,7 @@ from flask import Blueprint, g, jsonify, request
 from ..db import execute, one, rows, scalar
 from ..errors import nao_encontrado
 from ..security import auth_required
+from ..services import agenda as ag
 
 bp = Blueprint("notificacoes", __name__, url_prefix="/api/notificacoes")
 
@@ -18,6 +19,7 @@ def _minha(id_: int) -> dict:
 @bp.get("")
 @auth_required()
 def listar():
+    ag.gerar_lembretes(g.user)   # Sprint 06: lembretes de provas e atividades próximas (uma única vez cada)
     where, params = "id_usuario = ?", [g.user["id"]]
     if request.args.get("naoLidas") in ("1", "true"):
         where += " AND lida = 0"
@@ -36,6 +38,7 @@ def listar():
 @bp.get("/contagem")
 @auth_required()
 def contagem():
+    ag.gerar_lembretes(g.user)
     return jsonify(naoLidas=scalar("SELECT COUNT(*) FROM notificacao WHERE id_usuario = ? AND lida = 0", (g.user["id"],)))
 
 

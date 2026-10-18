@@ -46,6 +46,22 @@ def _dias_uteis(n: int, hoje: date) -> list[str]:
     return out
 
 
+def _feriados(ano: int) -> dict[str, str]:
+    """Feriados nacionais fixos (os móveis dependem do calendário da escola e são cadastrados pela coordenação)."""
+    return {f"{ano}-{md}": nome for md, nome in [
+        ("01-01", "Confraternização Universal"), ("04-21", "Tiradentes"), ("05-01", "Dia do Trabalho"),
+        ("09-07", "Independência do Brasil"), ("10-12", "Nossa Senhora Aparecida"), ("11-02", "Finados"),
+        ("11-15", "Proclamação da República"), ("12-25", "Natal")]}
+
+
+def _util(d: date, ano: int, passo: int = -1) -> date:
+    """Ajusta a data para um dia útil (sem fim de semana nem feriado nacional), andando para trás (-1) ou para frente (+1)."""
+    feriados = _feriados(ano)
+    while d.weekday() >= 5 or d.isoformat() in feriados:
+        d += timedelta(days=passo)
+    return d
+
+
 def popular(con) -> None:
     hoje = date.today()
     ano = hoje.year
@@ -128,7 +144,7 @@ def popular(con) -> None:
 
     # ---- avaliações, notas e frequência
     aval = {k: ins("INSERT INTO avaliacao (id_turma_disciplina,titulo,data_avaliacao,tipo,bimestre) VALUES (?,?,?,?,2)",
-                   (v, "Prova B2", (hoje - timedelta(days=14)).isoformat(), "PROVA")) for k, v in td.items()}
+                   (v, "Prova B2", _util(hoje - timedelta(days=14), ano).isoformat(), "PROVA")) for k, v in td.items()}
     notas = [
         (lucas, "8º Ano B", {"Matemática": 7.5, "Português": 8.0, "História": 9.0, "Ciências": 8.5, "Geografia": 7.8}),
         (mariana, "8º Ano B", {"Matemática": 9.0, "Português": 8.5, "História": 8.0, "Ciências": 9.2, "Geografia": 8.8}),
@@ -143,13 +159,27 @@ def popular(con) -> None:
     ajuste = {lucas: -0.5, mariana: 0.3, thiago: 0.4, ana: 0.0}
     for (t, d), id_td in td.items():
         p1 = ins("INSERT INTO avaliacao (id_turma_disciplina,titulo,data_avaliacao,tipo,bimestre,peso) VALUES (?,?,?,?,1,1)",
-                 (id_td, "Prova B1", (hoje - timedelta(days=75)).isoformat(), "PROVA"))
+                 (id_td, "Prova B1", _util(hoje - timedelta(days=75), ano).isoformat(), "PROVA"))
         tr = ins("INSERT INTO avaliacao (id_turma_disciplina,titulo,data_avaliacao,tipo,bimestre,peso) VALUES (?,?,?,?,1,0.5)",
-                 (id_td, "Trabalho B1", (hoje - timedelta(days=60)).isoformat(), "TRABALHO"))
+                 (id_td, "Trabalho B1", _util(hoje - timedelta(days=60), ano).isoformat(), "TRABALHO"))
         for a, tt, por in notas:
             if tt == t and d in por:
                 ins("INSERT INTO nota (id_avaliacao,id_aluno,valor) VALUES (?,?,?)", (p1, a, round(min(10, max(0, por[d] + ajuste[a])), 1)))
                 ins("INSERT INTO nota (id_avaliacao,id_aluno,valor) VALUES (?,?,?)", (tr, a, round(min(10, por[d] + 0.5), 1)))
+
+    # Sprint 06: avaliações marcadas para os próximos dias (alimentam o calendário de provas, a agenda e os lembretes)
+    for t, d, titulo, tipo, bim, dias_, peso in [
+        ("8º Ano B", "Geografia", "Teste B2", "TESTE", 2, 2, 0.5),
+        ("8º Ano B", "Matemática", "Prova de Recuperação B2", "PROVA", 2, 8, 1),
+        ("8º Ano B", "Português", "Prova de Recuperação B2", "PROVA", 2, 9, 1),
+        ("8º Ano B", "Ciências", "Trabalho B2 — Maquete", "TRABALHO", 2, 11, 0.5),
+        ("8º Ano B", "História", "Prova B3", "PROVA", 3, 24, 1),
+        ("8º Ano A", "Matemática", "Prova de Recuperação B2", "PROVA", 2, 8, 1),
+        ("9º Ano A", "Ciências", "Prova de Recuperação B2", "PROVA", 2, 8, 1),
+        ("5º Ano A", "Matemática", "Teste B2", "TESTE", 2, 4, 0.5),
+    ]:
+        ins("INSERT INTO avaliacao (id_turma_disciplina,titulo,data_avaliacao,tipo,bimestre,peso) VALUES (?,?,?,?,?,?)",
+            (td[(t, d)], titulo, _util(hoje + timedelta(days=dias_), ano, 1).isoformat(), tipo, bim, peso))
 
     dias = _dias_uteis(20, hoje)
     faltas = [
@@ -197,12 +227,26 @@ def popular(con) -> None:
     comunicado("Planejamento do 4º bimestre", "Professores: enviem os planos de aula do próximo bimestre à coordenação até o dia 20.",
                _dt(hoje - timedelta(days=3), 10), paula, "PROFESSORES", lido_por=[prof["ricardo"]])
 
+    # ---- calendário escolar (PB17): feriados nacionais, recessos e eventos (alguns relativos a "hoje" para a demonstração)
+    def evento(titulo, desc, inicio, fim=None, tipo="EVENTO", inteiro=False, publico="TODOS", id_turma=None):
+        ins("""INSERT INTO evento (titulo,descricao,inicio,fim,tipo,dia_inteiro,publico,id_turma,id_usuario_autor) VALUES (?,?,?,?,?,?,?,?,?)""",
+            (titulo, desc, inicio, fim, tipo, int(inteiro), publico, id_turma, paula))
+
+    for dia_, nome in _feriados(ano).items():
+        evento(nome, "Feriado nacional — sem aulas.", f"{dia_}T00:00:00", None, "FERIADO", True)
+    evento("Recesso escolar de julho", "Férias de meio de ano — sem aulas.", f"{ano}-07-13T00:00:00", f"{ano}-07-24T23:59:00", "RECESSO", True)
+    evento("Recesso de fim de ano", "Encerramento do ano letivo — sem aulas.", f"{ano}-12-21T00:00:00", f"{ano}-12-31T23:59:00", "RECESSO", True)
+    evento(f"Início do ano letivo {ano}", "Acolhida de alunos e responsáveis.", f"{ano}-02-02T08:00:00", None, "EVENTO")
+    rec = _util(hoje + timedelta(days=22), ano, 1)
+    evento("Planejamento pedagógico (sem aulas)", "Dia de planejamento da equipe docente; não haverá aulas.", _dt(rec, 0), _dt(rec, 23, 59), "RECESSO", True)
     for titulo, desc, dias_, h, tipo in [
         ("Reunião de Pais e Mestres", "Entrega de boletins do 3º Bimestre", 10, 19, "REUNIAO"),
         ("Conselho de Classe Geral", "Alinhamento pedagógico e notas baixas", 15, 14, "CONSELHO"),
         (f"Feira de Ciências {ano}", "Exposição de projetos no pátio central", 20, 9, "EVENTO"),
     ]:
-        ins("INSERT INTO evento (titulo,descricao,inicio,tipo) VALUES (?,?,?,?)", (titulo, desc, _dt(hoje + timedelta(days=dias_), h), tipo))
+        evento(titulo, desc, _dt(_util(hoje + timedelta(days=dias_), ano, 1), h), None, tipo)
+    evento("Visita ao Museu de Ciências", "Saída de campo do 8º Ano B. Autorização assinada até sexta-feira.",
+           _dt(_util(hoje + timedelta(days=12), ano, 1), 8, 30), _dt(_util(hoje + timedelta(days=12), ano, 1), 12), "EVENTO", False, "TURMA", turma["8º Ano B"])
 
     ocorrencias = {}
     for chave, a, p, titulo, desc, quando, status, tipo, grav in [

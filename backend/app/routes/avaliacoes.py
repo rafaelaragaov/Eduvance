@@ -8,6 +8,8 @@ from flask import Blueprint, g, jsonify, request
 from ..db import execute, one, rows
 from ..errors import ApiError, Corpo, nao_encontrado, proibido
 from ..security import auth_required
+from ..services import agenda as ag
+from ..services import comunicacao as cm
 from ..services.acesso import pode_gerir_turma_disciplina
 
 bp = Blueprint("avaliacoes", __name__, url_prefix="/api/avaliacoes")
@@ -66,6 +68,16 @@ def _corpo(id_atual: int | None = None) -> dict:
     return d
 
 
+def _turma_de(id_td: int) -> int:
+    return one("SELECT id_turma FROM turma_disciplina WHERE id_turma_disciplina = ?", (id_td,))["id_turma"]
+
+
+def _avisar_turma(a: dict, titulo: str, mensagem: str) -> int:
+    """Integração com Comunicação (Sprint 05): avisa os alunos da turma e seus responsáveis."""
+    destino = ag.destinatarios_turma(_turma_de(a["idTurmaDisciplina"]))
+    return cm.notificar(destino, "AGENDA", titulo, mensagem, "/provas", ignorar=g.user["id"])
+
+
 @bp.get("")
 @auth_required("PROFESSOR", "COORDENADOR", "ADMIN")
 def listar():
@@ -102,11 +114,15 @@ def criar():
     d = _corpo()
     if not pode_gerir_turma_disciplina(g.user, d["idTurmaDisciplina"]):
         raise proibido("Você não leciona esta disciplina nesta turma")
+    ag.validar_data_avaliacao(d["dataAvaliacao"], _turma_de(d["idTurmaDisciplina"]), d["tipo"])   # Sprint 06: calendário
     novo = execute(
         "INSERT INTO avaliacao (id_turma_disciplina, titulo, tipo, bimestre, data_avaliacao, peso) VALUES (?,?,?,?,?,?)",
         (d["idTurmaDisciplina"], d["titulo"], d["tipo"], d["bimestre"], d["dataAvaliacao"], d["peso"]),
     )
-    return jsonify(_por_id(novo)), 201
+    a = _por_id(novo)
+    a["notificados"] = _avisar_turma(a, f"Nova avaliação: {a['titulo']} ({a['disciplina']})",
+                                     f"{a['titulo']} de {a['disciplina']} ({a['turma']}) marcada para {ag.br(a['dataAvaliacao'])}.")
+    return jsonify(a), 201
 
 
 @bp.put("/<int:id_>")
@@ -122,12 +138,47 @@ def atualizar(id_):
         raise proibido("Você não leciona esta disciplina nesta turma")
     if atual["notasLancadas"] and d["idTurmaDisciplina"] != atual["idTurmaDisciplina"]:
         raise ApiError(409, "Não é possível mudar a turma/disciplina de uma avaliação que já possui notas lançadas")
+    mudou_data = (d["dataAvaliacao"], d["idTurmaDisciplina"], d["tipo"]) != (atual["dataAvaliacao"], atual["idTurmaDisciplina"], atual["tipo"])
+    if mudou_data:   # Sprint 06: só reaplica as regras do calendário quando a data/turma/tipo mudam (dados antigos continuam editáveis)
+        ag.validar_data_avaliacao(d["dataAvaliacao"], _turma_de(d["idTurmaDisciplina"]), d["tipo"], id_)
     execute(
         """UPDATE avaliacao SET id_turma_disciplina = ?, titulo = ?, tipo = ?, bimestre = ?, data_avaliacao = ?, peso = ?
             WHERE id_avaliacao = ?""",
         (d["idTurmaDisciplina"], d["titulo"], d["tipo"], d["bimestre"], d["dataAvaliacao"], d["peso"], id_),
     )
-    return jsonify(_por_id(id_))
+    a = _por_id(id_)
+    a["notificados"] = 0
+    if d["dataAvaliacao"] != atual["dataAvaliacao"]:
+        a["notificados"] = _avisar_turma(a, f"Avaliação remarcada: {a['titulo']} ({a['disciplina']})",
+                                         f"{a['titulo']} de {a['disciplina']} ({a['turma']}) passou de {ag.br(atual['dataAvaliacao'])} para {ag.br(a['dataAvaliacao'])}.")
+    return jsonify(a)
+
+
+@bp.patch("/<int:id_>/data")
+@auth_required("PROFESSOR", "COORDENADOR", "ADMIN")
+def remarcar(id_):
+    """Remarca a avaliação (calendário de provas). Avisa alunos e responsáveis da turma."""
+    atual = _por_id(id_)
+    if not atual:
+        raise nao_encontrado("Avaliação", feminino=True)
+    if not pode_gerir_turma_disciplina(g.user, atual["idTurmaDisciplina"]):
+        raise proibido()
+    c = Corpo(request.get_json(silent=True))
+    nova = c.data("dataAvaliacao", "Nova data")
+    motivo = c.texto("motivo", "Motivo", maximo=200, obrigatorio=False)
+    c.validar()
+    if atual["notasLancadas"]:
+        raise ApiError(409, "Não é possível remarcar uma avaliação que já possui notas lançadas")
+    if nova == atual["dataAvaliacao"]:
+        raise ApiError(400, "Dados inválidos", [{"campo": "dataAvaliacao", "mensagem": "Escolha uma data diferente da atual"}])
+    if int(nova[:4]) != atual["anoLetivo"]:
+        raise ApiError(400, "Dados inválidos", [{"campo": "dataAvaliacao", "mensagem": f"A data deve estar dentro do ano letivo da turma ({atual['anoLetivo']})"}])
+    ag.validar_data_avaliacao(nova, _turma_de(atual["idTurmaDisciplina"]), atual["tipo"], id_)
+    execute("UPDATE avaliacao SET data_avaliacao = ? WHERE id_avaliacao = ?", (nova, id_))
+    a = _por_id(id_)
+    texto = f"{a['titulo']} de {a['disciplina']} ({a['turma']}) passou de {ag.br(atual['dataAvaliacao'])} para {ag.br(nova)}."
+    a["notificados"] = _avisar_turma(a, f"Avaliação remarcada: {a['titulo']} ({a['disciplina']})", texto + (f" Motivo: {motivo}." if motivo else ""))
+    return jsonify(a)
 
 
 @bp.delete("/<int:id_>")
