@@ -2,13 +2,14 @@
 
 Plataforma que centraliza informações acadêmicas, pedagógicas e administrativas entre escola, professores, alunos e responsáveis, com uma área de preparação para vestibulares.
 
-**Disciplina:** Fábrica de Software · **Turma:** 8NB · **Estado:** Sprint 05 — segundo módulo (Comunicação Escolar: Comunicados, Ocorrências e Notificações)
+**Disciplina:** Fábrica de Software · **Turma:** 8NB · **Estado:** Sprint 06 — terceiro módulo (Agenda e Calendário Escolar), integração entre módulos, Configurações (tamanho da fonte), serviço de recomendação e PostgreSQL
 
 | Camada | Tecnologia |
 |---|---|
 | Interface | React 19 + TypeScript (build com esbuild) |
 | API REST | Python 3 + Flask, autenticação JWT, senhas com hash PBKDF2-SHA256 |
-| Banco de dados | SQLite (`database/schema.sql`) — script equivalente para PostgreSQL em `database/schema.postgresql.sql` |
+| Banco de dados | SQLite (padrão, `database/schema.sql`) **ou PostgreSQL 16** (`database/schema.postgresql.sql`) — o mesmo código roda nos dois |
+| Recomendações | Motor de regras em Python, exposto como API **FastAPI** (`recomendacao/`) e também embutido no back-end |
 
 ## O que está funcionando (Sprint 03)
 
@@ -22,7 +23,43 @@ Plataforma que centraliza informações acadêmicas, pedagógicas e administrati
 
 ## Modo escuro
 
-Todas as telas têm tema claro e escuro. O botão de lua/sol fica na barra lateral (no celular, no topo) e na tela de login. A escolha é salva no navegador (`localStorage`, chave `eduvance:tema`); sem escolha salva, o sistema segue o tema do sistema operacional. O tema é aplicado antes da primeira pintura, então não há "flash" de tela clara. As cores são variáveis CSS em `frontend/src/styles.css` (bloco `:root[data-theme='dark']`) e a lógica está em `frontend/src/theme.tsx`. Evidências e roteiro de teste: `docs/evidencias/dark-mode/`.
+Todas as telas têm tema claro, escuro e automático. O botão de lua/sol alterna o tema que está sendo exibido; a escolha "Automático" fica em **Configurações**. A preferência é salva no navegador (`localStorage`, chave `eduvance:prefs`) e, com a pessoa logada, também na conta; sem escolha salva, o sistema segue o tema do sistema operacional. O tema é aplicado antes da primeira pintura, então não há "flash" de tela clara. As cores são variáveis CSS em `frontend/src/styles.css` (bloco `:root[data-theme='dark']`) e a lógica está em `frontend/src/prefs.tsx`. Evidências e roteiro de teste: `docs/evidencias/dark-mode/`.
+
+## Sprint 06 — Módulo Agenda e Calendário Escolar (PB13, PB16, PB17) e integração
+
+1. **Coordenação** cadastra eventos no **calendário escolar** (reunião, conselho, feriado, recesso, evento) para um público; os destinatários são notificados.
+2. **Professor** vê as avaliações e **remarca** uma prova com motivo; a turma é avisada e a agenda se atualiza.
+3. **Aluno** e **responsável** consultam a **agenda** (aulas, atividades, provas, eventos), o **calendário de provas** e o **calendário escolar**; o dashboard lista os próximos compromissos e as **recomendações de estudo**.
+4. Lembretes de prova e atividade próximas chegam ao sino de notificações, sem repetição.
+5. **Configurações** (`/configuracoes`): tamanho da fonte (85% a 150%), tema e "restaurar padrão", salvos na conta.
+
+Regras: feriado/recesso bloqueiam aula e avaliação; no máximo 2 provas por dia por turma; avaliação com notas não é remarcada; consulta de agenda limitada a 100 dias.
+
+### Serviço de recomendação (FastAPI)
+
+```bash
+pip install -r recomendacao/requirements.txt
+uvicorn recomendacao.servico:app --port 8001            # GET /health · POST /recomendar · /docs (OpenAPI)
+export EDUVANCE_RECOMENDACAO_URL=http://127.0.0.1:8001  # sem isso (ou se o serviço cair) o back-end usa o motor embutido
+python -m unittest discover -s recomendacao/tests -t .  # testes do motor e da camada HTTP
+```
+
+### Rodando com PostgreSQL
+
+```bash
+docker compose up -d db
+export EDUVANCE_DATABASE_URL=postgresql://eduvance:eduvance@localhost:5432/eduvance
+cd backend && pip install -r requirements-postgres.txt
+python -m app.init_db --reset && python run.py                   # banco novo, ou
+python -m app.migrar_para_postgres --reset                       # copia o SQLite atual e confere as contagens
+EDUVANCE_TEST_PG_URL=$EDUVANCE_DATABASE_URL python -m unittest discover -s tests   # suíte completa no PostgreSQL
+```
+
+### Verificação no Windows
+
+`iniciar.bat` prepara e abre o sistema (e sobe o serviço de recomendação se o FastAPI instalar). `verificar.bat` roda `npm run typecheck`, o build, os testes do back-end e da recomendação e grava tudo em `docs/evidencias/sprint06/verificacao_pc.txt`.
+
+> Atualizando da Sprint 05? Recrie o banco: `python -m app.init_db --reset` (nova tabela `preferencia_usuario`, `recomendacao_ia` reformulada, `notificacao.chave`). Relatório: `docs/SPRINT06.md`.
 
 ## Sprint 05 — Módulo Comunicação Escolar (PB18, PB19, PB21)
 
@@ -89,6 +126,9 @@ Abra **http://localhost:5000**.
 | Variável | Padrão | Uso |
 |---|---|---|
 | `EDUVANCE_DB` | `database/eduvance.db` | caminho do arquivo SQLite |
+| `EDUVANCE_DATABASE_URL` | — | se definida (`postgresql://…`), usa PostgreSQL no lugar do SQLite |
+| `EDUVANCE_DATABASE_SCHEMA` | — | schema (search_path) do PostgreSQL, opcional |
+| `EDUVANCE_RECOMENDACAO_URL` | — | URL do serviço FastAPI; vazio = motor embutido |
 | `EDUVANCE_JWT_SECRET` | valor de desenvolvimento | **defina em produção** |
 | `EDUVANCE_JWT_HORAS` | `8` | validade do token |
 | `PORT` | `5000` | porta do servidor |
@@ -103,7 +143,7 @@ cd backend && EDUVANCE_DEBUG=1 python run.py      # API com recarga automática
 ### Testes
 
 ```bash
-cd backend && python -m unittest discover -s tests -v    # 60 testes de integração (banco temporário)
+cd backend && python -m unittest discover -s tests -v    # 111 testes de integração (banco temporário; SQLite e PostgreSQL)
 ```
 
 ## Controle de perfis
@@ -152,22 +192,33 @@ As regras são aplicadas **no servidor** (decorator `@auth_required(...)` + veri
 | GET | `/api/dashboard` | dashboard do perfil logado |
 | GET | `/api/alunos/{id}/resumo` | boletim, mensalidades e ocorrências |
 | GET/POST | `/api/vestibular` | simulados, redações, fórum, materiais |
+| GET | `/api/agenda` · `/proximos` · `/provas` | agenda por período, próximos compromissos e calendário de provas |
+| GET/POST/PUT/DELETE | `/api/eventos` · `/api/eventos/{id}` | calendário escolar (coordenação/administração escrevem) |
+| PATCH | `/api/avaliacoes/{id}/data` | remarcar avaliação (motivo obrigatório; notifica a turma) |
+| GET/PUT/DELETE | `/api/preferencias` | tamanho da fonte e tema da conta |
+| GET | `/api/recomendacoes?idAluno=` | recomendações de estudo |
 
 ## Estrutura do repositório
 
 ```
 backend/            API Flask (app/), testes (tests/), run.py
-  app/routes/       auth, usuarios, atividades, avaliacoes, notas, frequencia, boletim, dashboard, vestibular, catalogo
+  app/routes/       auth, usuarios, atividades, avaliacoes, notas, frequencia, boletim, dashboard, vestibular, catalogo, comunicados, ocorrencias, notificacoes, agenda, eventos, preferencias, recomendacoes
   app/services/     regras acadêmicas e de acesso
   app/seed.py       dados de demonstração
 frontend/           React + TypeScript (src/), build.mjs
-database/           schema.sql (SQLite) · schema.postgresql.sql (migração)
-docs/               relatório da Sprint 03 e evidências (capturas de tela)
+recomendacao/       serviço de recomendação (motor.py + FastAPI em servico.py) e testes
+database/           schema.sql (SQLite) · schema.postgresql.sql (PostgreSQL)
+tools/              contribuicoes.py (resumo do Git por pessoa e dia)
+docs/               relatórios das Sprints 03 a 06, CONTRIBUICOES.md e evidências (capturas, testes, saídas)
 ```
 
 ## Roadmap
 
-Próximas Sprints: agenda e calendário (PB13, PB16, PB17), mensalidades (PB20), horários (PB22), chat professor/aluno, gabaritos e serviço de recomendação (Python/FastAPI) — itens PB13 a PB30 do backlog.
+Próximas Sprints: mensalidades (PB20), horários (PB22), chat professor/aluno, simulados e gabaritos da área de vestibular, notificações por e-mail e publicação em servidor.
+
+## Contribuindo
+
+Cada pessoa commita com a própria identidade, em branch por funcionalidade e Pull Request revisado — ver [`CONTRIBUTING.md`](CONTRIBUTING.md). Quem fez o quê: [`docs/CONTRIBUICOES.md`](docs/CONTRIBUICOES.md).
 
 ## Equipe
 

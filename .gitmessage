@@ -1,0 +1,7 @@
+# tipo(escopo): resumo no imperativo (até ~72 caracteres)
+#   tipos:   feat | fix | test | docs | refactor | chore
+#   escopos: api | web | db | recomendacao | docs
+#
+# Corpo (opcional): por que a mudança foi necessária. Cite o item do backlog (PB16, PB17...).
+#
+# Co-authored-by: Nome <email>     <- somente se alguém trabalhou junto
