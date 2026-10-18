@@ -12,6 +12,9 @@
 --   * trigger: no máximo 2 responsáveis por aluno (requisito 6.1)
 --   * Sprint 05 (módulo Comunicação Escolar): comunicado.publico/id_turma; ocorrencia.tipo/gravidade/parecer/
 --     resolvida_em; NOVAS tabelas comunicado_leitura, ocorrencia_historico e notificacao
+--   * Sprint 06 (módulo Agenda e Calendário Escolar): evento ganhou publico/id_turma/autor/dia_inteiro e tipos
+--     controlados; notificacao.tipo inclui AGENDA e ganhou 'chave' (lembretes sem duplicidade);
+--     NOVA tabela preferencia_usuario (tamanho da fonte e tema, página Configurações)
 -- Datas/horas são gravadas como texto ISO-8601 no horário local da escola.
 -- ============================================================================
 PRAGMA foreign_keys = ON;
@@ -202,14 +205,16 @@ CREATE TABLE ocorrencia_historico (                            -- NOVA (Sprint 0
 CREATE TABLE notificacao (                                     -- NOVA (Sprint 05)
     id_notificacao INTEGER PRIMARY KEY AUTOINCREMENT,
     id_usuario     INTEGER NOT NULL REFERENCES usuario(id_usuario) ON DELETE CASCADE,
-    tipo           TEXT NOT NULL CHECK (tipo IN ('COMUNICADO','OCORRENCIA','FREQUENCIA')),
+    tipo           TEXT NOT NULL CHECK (tipo IN ('COMUNICADO','OCORRENCIA','FREQUENCIA','AGENDA')),
     titulo         TEXT NOT NULL,
     mensagem       TEXT NOT NULL,
     link           TEXT,
     lida           INTEGER NOT NULL DEFAULT 0 CHECK (lida IN (0,1)),
-    criada_em      TEXT NOT NULL DEFAULT (datetime('now','localtime'))
+    criada_em      TEXT NOT NULL DEFAULT (datetime('now','localtime')),
+    chave          TEXT                                                  -- Sprint 06: lembretes automáticos (evita repetir)
 );
 CREATE INDEX ix_notificacao_usuario ON notificacao (id_usuario, lida, criada_em);
+CREATE UNIQUE INDEX ux_notificacao_chave ON notificacao (id_usuario, chave) WHERE chave IS NOT NULL;
 
 CREATE TABLE mensalidade (
     id_mensalidade  INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -220,13 +225,30 @@ CREATE TABLE mensalidade (
     forma_pagamento TEXT
 );
 
-CREATE TABLE evento (
-    id_evento INTEGER PRIMARY KEY AUTOINCREMENT,
-    titulo    TEXT NOT NULL,
-    descricao TEXT,
-    inicio    TEXT NOT NULL,
-    fim       TEXT,
-    tipo      TEXT NOT NULL DEFAULT 'GERAL'
+CREATE TABLE evento (                                          -- Sprint 06: calendário escolar (PB17)
+    id_evento        INTEGER PRIMARY KEY AUTOINCREMENT,
+    titulo           TEXT NOT NULL,
+    descricao        TEXT,
+    inicio           TEXT NOT NULL,                                -- YYYY-MM-DDTHH:MM:SS
+    fim              TEXT,                                         -- opcional (eventos de vários dias)
+    tipo             TEXT NOT NULL DEFAULT 'EVENTO'
+                     CHECK (tipo IN ('EVENTO','REUNIAO','CONSELHO','FERIADO','RECESSO')),
+    dia_inteiro      INTEGER NOT NULL DEFAULT 0 CHECK (dia_inteiro IN (0,1)),
+    publico          TEXT NOT NULL DEFAULT 'TODOS'
+                     CHECK (publico IN ('TODOS','ALUNOS','RESPONSAVEIS','PROFESSORES','TURMA')),
+    id_turma         INTEGER REFERENCES turma(id_turma) ON DELETE CASCADE,
+    id_usuario_autor INTEGER REFERENCES usuario(id_usuario) ON DELETE SET NULL,
+    criado_em        TEXT NOT NULL DEFAULT (datetime('now','localtime')),
+    CHECK ((publico = 'TURMA') = (id_turma IS NOT NULL)),
+    CHECK (fim IS NULL OR fim >= inicio)
+);
+CREATE INDEX ix_evento_inicio ON evento (inicio);
+
+CREATE TABLE preferencia_usuario (                             -- NOVA (Sprint 06): página Configurações
+    id_usuario  INTEGER PRIMARY KEY REFERENCES usuario(id_usuario) ON DELETE CASCADE,
+    fonte       INTEGER NOT NULL DEFAULT 100 CHECK (fonte IN (85,100,115,130,150)),   -- % do tamanho padrão do texto
+    tema        TEXT    NOT NULL DEFAULT 'auto' CHECK (tema IN ('claro','escuro','auto')),
+    atualizada_em TEXT  NOT NULL DEFAULT (datetime('now','localtime'))
 );
 
 -- ---------- Área de vestibular ----------------------------------------------
@@ -287,7 +309,14 @@ CREATE TABLE recomendacao_ia (
     id_recomendacao INTEGER PRIMARY KEY AUTOINCREMENT,
     id_aluno        INTEGER NOT NULL REFERENCES aluno(id_aluno) ON DELETE CASCADE,
     id_disciplina   INTEGER REFERENCES disciplina(id_disciplina) ON DELETE SET NULL,
-    tipo            TEXT NOT NULL,
-    justificativa   TEXT,
+    tipo            TEXT NOT NULL CHECK (tipo IN ('REFORCO','PROVA','FREQUENCIA','ATIVIDADE','DESTAQUE')),
+    prioridade      TEXT NOT NULL DEFAULT 'MEDIA' CHECK (prioridade IN ('ALTA','MEDIA','BAIXA')),
+    score           REAL NOT NULL DEFAULT 0,
+    titulo          TEXT NOT NULL DEFAULT '',
+    justificativa   TEXT,                -- mensagem exibida ao aluno
+    motivo          TEXT,                -- JSON com os números que originaram a sugestão (explicabilidade)
+    link            TEXT,
+    origem          TEXT NOT NULL DEFAULT 'motor',   -- 'servico' (FastAPI) | 'motor' (embutido)
     criada_em       TEXT NOT NULL DEFAULT (datetime('now','localtime'))
 );
+CREATE INDEX ix_recomendacao_aluno ON recomendacao_ia (id_aluno, score DESC);

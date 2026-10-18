@@ -1,9 +1,10 @@
 """Erros de API e validação simples de corpo JSON."""
 import re
-import sqlite3
 from datetime import datetime
 
 from flask import jsonify
+
+from .db import erros_de_integridade, mensagem_integridade
 
 
 class ApiError(Exception):
@@ -31,9 +32,8 @@ def registrar_handlers(app):
             corpo["detalhes"] = e.detalhes
         return jsonify(corpo), e.status
 
-    @app.errorhandler(sqlite3.IntegrityError)
-    def _integridade(e: sqlite3.IntegrityError):
-        msg = str(e)
+    def _integridade(e):
+        msg = mensagem_integridade(e)
         if "usuario.email" in msg:
             return jsonify(erro="Já existe um usuário com este e-mail"), 409
         if "aluno.matricula" in msg:
@@ -47,6 +47,9 @@ def registrar_handlers(app):
         if "UNIQUE" in msg:
             return jsonify(erro="Registro duplicado"), 409
         return jsonify(erro="Dados inválidos para o banco de dados"), 400
+
+    for classe in erros_de_integridade():   # sqlite3.IntegrityError e (se instalado) psycopg.errors.IntegrityError
+        app.register_error_handler(classe, _integridade)
 
     @app.errorhandler(404)
     def _404(_e):

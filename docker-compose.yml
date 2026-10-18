@@ -1,0 +1,19 @@
+# PostgreSQL 16 para o Eduvance (opcional — o padrão continua sendo o SQLite, sem instalar nada).
+#   docker compose up -d db
+#   export EDUVANCE_DATABASE_URL=postgresql://eduvance:eduvance@localhost:5432/eduvance
+#   cd backend && pip install -r requirements-postgres.txt && python -m app.init_db --reset && python run.py
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: eduvance
+      POSTGRES_PASSWORD: eduvance
+      POSTGRES_DB: eduvance
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U eduvance"]
+      interval: 5s
+      retries: 10
+volumes:
+  pgdata:

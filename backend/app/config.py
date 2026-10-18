@@ -10,6 +10,11 @@ class Config:
     DATABASE = os.environ.get("EDUVANCE_DB", str(RAIZ / "database" / "eduvance.db"))
     SCHEMA_SQL = str(RAIZ / "database" / "schema.sql")
 
+    # PostgreSQL (Sprint 06): se definida, substitui o SQLite. Ex.: postgresql://eduvance:senha@localhost:5432/eduvance
+    DATABASE_URL = os.environ.get("EDUVANCE_DATABASE_URL", "")
+    DATABASE_SCHEMA = os.environ.get("EDUVANCE_DATABASE_SCHEMA", "")      # opcional: schema (search_path) no PostgreSQL
+    SCHEMA_PG_SQL = str(RAIZ / "database" / "schema.postgresql.sql")
+
     # Autenticação
     JWT_SECRET = os.environ.get("EDUVANCE_JWT_SECRET", "dev-only-secret-change-me-please-32b!")
     JWT_HORAS = int(os.environ.get("EDUVANCE_JWT_HORAS", "8"))
@@ -24,6 +29,10 @@ class Config:
     MEDIA_APROVACAO = 6.0
     FREQUENCIA_MINIMA = 75.0      # % mínima de presença exigida (Sprint 04)
     MIN_AULAS_PARA_FALTA = 10     # só aplica a reprovação por falta com pelo menos N aulas registradas
+
+    # Serviço de recomendação (Sprint 06): vazio = usa o motor de regras embutido; com URL = chama o serviço FastAPI
+    RECOMENDACAO_URL = os.environ.get("EDUVANCE_RECOMENDACAO_URL", "").rstrip("/")
+    RECOMENDACAO_TIMEOUT = float(os.environ.get("EDUVANCE_RECOMENDACAO_TIMEOUT", "2"))
 
     # Proteção contra força bruta no login
     LOGIN_MAX_POR_MINUTO = int(os.environ.get("EDUVANCE_LOGIN_MAX", "20"))

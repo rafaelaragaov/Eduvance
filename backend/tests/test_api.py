@@ -1,16 +1,24 @@
-"""Testes de integração da API (banco SQLite temporário, recriado a cada execução).
+"""Testes de integração da API. Por padrão usam um banco SQLite temporário, recriado a cada classe de teste.
 
     cd backend && python -m unittest discover -s tests -v
+
+A MESMA suíte roda no PostgreSQL (Sprint 06 — migração real): defina EDUVANCE_TEST_PG_URL e cada classe de teste
+ganha um schema próprio (criado e removido automaticamente), com o mesmo seed:
+
+    EDUVANCE_TEST_PG_URL=postgresql://usuario:senha@localhost:5432/eduvance_teste python -m unittest discover -s tests
 """
 import os
 import tempfile
 import unittest
+import uuid
 from datetime import date, datetime, timedelta
 
 from app import create_app
+from app.db import ConexaoPG, conectar
 from app.init_db import criar_banco
 
 SENHA = "senha123"
+PG_URL = os.environ.get("EDUVANCE_TEST_PG_URL", "")
 
 
 class Base(unittest.TestCase):
@@ -18,12 +26,32 @@ class Base(unittest.TestCase):
     def setUpClass(cls):
         cls._dir = tempfile.TemporaryDirectory()
         cls.db = os.path.join(cls._dir.name, "teste.db")
-        criar_banco(cls.db)
-        cls.app = create_app({"DATABASE": cls.db, "TESTING": True, "LOGIN_MAX_POR_MINUTO": 1000})
+        cls.schema = None
+        if PG_URL:
+            cls.schema = "t_" + uuid.uuid4().hex[:10]
+            criar_banco(PG_URL, schema=cls.schema)
+            cls.app = create_app({"DATABASE_URL": PG_URL, "DATABASE_SCHEMA": cls.schema, "TESTING": True, "LOGIN_MAX_POR_MINUTO": 1000})
+        else:
+            criar_banco(cls.db)
+            cls.app = create_app({"DATABASE": cls.db, "TESTING": True, "LOGIN_MAX_POR_MINUTO": 1000})
 
     @classmethod
     def tearDownClass(cls):
+        if cls.schema:
+            con = ConexaoPG(PG_URL)
+            con.execute(f"DROP SCHEMA IF EXISTS {cls.schema} CASCADE")
+            con.commit()
+            con.close()
         cls._dir.cleanup()
+
+    @classmethod
+    def sql(cls, consulta, params=()):
+        """Consulta direta ao banco de teste (SQLite ou PostgreSQL), para conferir o que foi gravado de fato."""
+        con = ConexaoPG(PG_URL, cls.schema) if cls.schema else conectar(cls.db)
+        try:
+            return [tuple(r.values()) if cls.schema else tuple(r) for r in con.execute(consulta, params).fetchall()]
+        finally:
+            con.close()
 
     def setUp(self):
         self.c = self.app.test_client()
@@ -72,11 +100,7 @@ class TestBancoELogin(Base):
         self.assertEqual(r.status_code, 400)
 
     def test_senha_nao_e_texto_puro(self):
-        import sqlite3
-
-        con = sqlite3.connect(self.db)
-        h = con.execute("SELECT senha_hash FROM usuario WHERE email='ricardo@eduvance.com'").fetchone()[0]
-        con.close()
+        h = self.sql("SELECT senha_hash FROM usuario WHERE email='ricardo@eduvance.com'")[0][0]
         self.assertNotIn(SENHA, h)
         self.assertTrue(h.startswith("pbkdf2:sha256"))
 
@@ -293,7 +317,7 @@ class TestNotasEDashboards(Base):
         coord = self.c.get("/api/dashboard", headers=self.login("paula@eduvance.com")).get_json()
         self.assertEqual(coord["kpis"]["ocorrenciasAbertas"], 4)
         self.assertEqual(coord["kpis"]["professoresAtivos"] >= 5, True)
-        self.assertEqual(len(coord["eventos"]), 3)
+        self.assertEqual(len(coord["eventos"]), 4)   # próximos 4 eventos do calendário escolar (Sprint 06)
         resp = self.c.get("/api/dashboard", headers=self.login("maria@eduvance.com")).get_json()
         self.assertEqual([a["nome"] for a in resp["alunos"]], ["Lucas Silva", "Ana Silva"])
         self.assertEqual(resp["alunos"][0]["mediaGeral"], 8.2)
@@ -335,6 +359,17 @@ def _dia_util(recuo=0):
     d = date.today() - timedelta(days=recuo)
     while d.weekday() >= 5:
         d -= timedelta(days=1)
+    return d
+
+
+def _dia_livre():
+    """Dia útil sem chamada no seed (o seed registra os 20 dias úteis anteriores a hoje): hoje, ou, se for fim de
+    semana, um dia útil 30 dias atrás. Evita que o teste dependa do dia da semana em que é executado."""
+    d = date.today()
+    if d.weekday() >= 5:
+        d -= timedelta(days=30)
+        while d.weekday() >= 5:
+            d -= timedelta(days=1)
     return d
 
 
@@ -475,7 +510,7 @@ class TestFrequencia(ModuloBase):
 
     def test_chamada_persistente_e_atualizacao(self):
         h = self.login("ricardo@eduvance.com")
-        td, dia = self.td(h), _dia_util()
+        td, dia = self.td(h), _dia_livre()
         d, regs = self._chamada(h, td, dia)
         self.assertFalse(d["registrada"])
         self.assertEqual(len(regs), 28)
@@ -550,7 +585,8 @@ class TestBoletimCompleto(ModuloBase):
         self.assertEqual((mat["bimestres"]["1"], mat["bimestres"]["2"], mat["bimestres"]["3"]), (7.3, 7.5, None))
         self.assertEqual((mat["mediaParcial"], mat["situacao"]), (7.4, "Aprovado"))
         self.assertEqual(mat["frequencia"], 95.0)
-        self.assertEqual(len(mat["avaliacoes"]), 3)
+        self.assertEqual(len(mat["avaliacoes"]), 4)   # + "Prova de Recuperação B2" já marcada no calendário (sem nota, não entra na média)
+        self.assertIsNone(mat["avaliacoes"][-1]["nota"])
         self.assertEqual(b["faltasTotal"], 3)
 
     def test_media_ponderada_responde_a_novas_notas(self):
