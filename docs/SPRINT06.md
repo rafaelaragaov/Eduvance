@@ -21,11 +21,11 @@
 |---|---|---|---|
 | Número do grupo / divergência de integrantes (Alexandre) | Composição atual documentada em `docs/CONTRIBUICOES.md`; PDFs antigos não reescritos, nota de esclarecimento na capa do consolidado | **Parcial** — falta o número do grupo | `docs/CONTRIBUICOES.md` |
 | Roteiro E2E da Sprint 03 instável | Trocadas as esperas fixas por esperas explícitas; 17/17 estável | Corrigido | `docs/evidencias/sprint03/roteiro_e2e_resultado.txt` |
-| Mostrar `npm run typecheck` real | `verificar.bat` roda o comando no PC do grupo e grava a saída em arquivo. No ambiente de desenvolvimento só foi possível uma checagem parcial (sem `@types/react`), documentada como tal | **Depende da execução no PC** | `typecheck_parcial_sandbox.txt`, `verificacao_pc.txt` |
+| Mostrar `npm run typecheck` real | Executado no PC do grupo em 18/10/2026 por `verificar.bat`: `tsc --noEmit` com código de saída 0, sem erros (a checagem parcial do ambiente de desenvolvimento foi substituída) | Corrigido | `verificacao_pc.txt` |
 | Manter testes dos módulos anteriores | Suíte única: 111 testes; roteiros de navegador das Sprints 03, 05 e do modo escuro reexecutados | Corrigido | `testes_backend_*.txt`, `roteiro_e2e_resultado*.txt` |
 | Histórico do GitHub concentrado/sem autoria | `CONTRIBUTING.md`, modelo de commit e de PR, `tools/contribuicoes.py` e `docs/CONTRIBUICOES.md` | **Processo definido; adoção é do grupo** | `CONTRIBUTING.md` |
 | Avançar a migração real para PostgreSQL | Camada de banco dupla (SQLite/PostgreSQL), `docker-compose.yml`, `migrar_para_postgres.py`; suíte completa passa também no PostgreSQL 16 | Corrigido | `migracao_postgres.txt`, `testes_backend_postgres.txt` |
-| Implementar o serviço de recomendação (FastAPI) | `recomendacao/` (motor + API FastAPI) integrado ao Flask, com plano B embutido | Corrigido (FastAPI não pôde ser executado no ambiente de desenvolvimento — ver §9) | `testes_recomendacao.txt` |
+| Implementar o serviço de recomendação (FastAPI) | `recomendacao/` (motor + API FastAPI) integrado ao Flask, com plano B embutido | Corrigido (no PC do grupo: FastAPI 0.146.0, 18/18 testes e serviço no ar respondendo `/health` e `/recomendar`) | `verificacao_pc.txt`, `testes_recomendacao.txt` |
 
 ## 2. Terceiro módulo: Agenda e Calendário Escolar
 
@@ -87,7 +87,8 @@ Regras de negócio: feriado/recesso bloqueiam aula e avaliação naquele dia; no
 |---|---|
 | Backend (SQLite) — `python -m unittest discover -s tests` | **111 testes**, OK (3 pulados: dependem de PostgreSQL ou do dia da semana) |
 | Backend (PostgreSQL 16) — `EDUVANCE_TEST_PG_URL=...` | **111 testes**, OK |
-| Motor de recomendação | 18 testes, OK (4 da camada FastAPI pulados no ambiente de desenvolvimento) |
+| Motor de recomendação + API FastAPI (PC do grupo) | 18 testes, OK (os 4 da camada FastAPI rodaram no PC; no ambiente de desenvolvimento eram pulados) |
+| `npm run typecheck` e `npm run build` (PC do grupo) | código de saída 0 nos dois |
 | Navegador — Sprint 06 (SQLite e PostgreSQL) | **54/54** em cada |
 | Regressão de navegador: Sprint 03 · Sprint 05 · modo escuro | 17/17 · todas OK · todas OK |
 
@@ -95,7 +96,7 @@ Bugs encontrados nesta Sprint: diferenças de SQL entre SQLite e PostgreSQL (com
 
 ## 9. Limitações e dificuldades
 
-- O ambiente de desenvolvimento não alcança o PyPI nem o pacote `@types/react`: FastAPI e `npm run typecheck` oficiais precisam rodar no PC do grupo (`verificar.bat`). O contrato HTTP foi validado com um servidor simulado e a lógica pelo motor.
+- O ambiente de desenvolvimento não alcança o PyPI nem o pacote `@types/react`: o FastAPI e o `npm run typecheck` oficiais só puderam ser executados no PC do grupo (`verificar.bat`), o que exigiu ler a saída por arquivo.
 - Conciliar dois bancos em um único conjunto de consultas exigiu rever cada `IS`, `substr` e parâmetro nulo.
 - Calendário × notas: manter uma única fonte (a avaliação) para a agenda, a prova e a nota, sem duplicar datas.
 - Autoria dos commits: o histórico antigo não será reescrito.

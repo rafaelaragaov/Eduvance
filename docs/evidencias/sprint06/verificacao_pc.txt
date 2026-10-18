@@ -1,0 +1,110 @@
+=== Eduvance - verificacao da Sprint 06 === 
+Data: Sun 10/18/2026 20:56:47.85 
+Python 3.14.8
+v24.21.0
+ 
+=== 1) npm run typecheck === 
+
+> eduvance-frontend@0.3.0 typecheck
+> tsc --noEmit
+
+codigo de saida do typecheck: 0 
+ 
+=== 2) npm run build === 
+
+> eduvance-frontend@0.3.0 build
+> node build.mjs
+
+
+  dist\app.js   371.6kb
+  dist\app.css   31.8kb
+
+Done in 59ms
+codigo de saida do build: 0 
+ 
+=== 3) testes do backend: python -m unittest discover -s tests === 
+.................s.........................................................................ss...............[2026-10-18 20:57:11,061] WARNING in recomendacao: Serviço de recomendação indisponível (resposta fora do contrato); usando o motor embutido.
+.[2026-10-18 20:57:13,127] WARNING in recomendacao: Serviço de recomendação indisponível (<urlopen error timed out>); usando o motor embutido.
+..
+----------------------------------------------------------------------
+Ran 111 tests in 21.181s
+
+OK (skipped=3)
+• Tabelas criadas a partir de schema.sql
+• Dados de demonstração inseridos
+• Tabelas criadas a partir de schema.sql
+• Dados de demonstração inseridos
+• Tabelas criadas a partir de schema.sql
+• Dados de demonstração inseridos
+• Tabelas criadas a partir de schema.sql
+• Dados de demonstração inseridos
+• Tabelas criadas a partir de schema.sql
+• Dados de demonstração inseridos
+• Tabelas criadas a partir de schema.sql
+• Dados de demonstração inseridos
+• Tabelas criadas a partir de schema.sql
+• Dados de demonstração inseridos
+• Tabelas criadas a partir de schema.sql
+• Dados de demonstração inseridos
+• Tabelas criadas a partir de schema.sql
+• Dados de demonstração inseridos
+• Tabelas criadas a partir de schema.sql
+• Dados de demonstração inseridos
+• Tabelas criadas a partir de schema.sql
+• Dados de demonstração inseridos
+• Tabelas criadas a partir de schema.sql
+• Dados de demonstração inseridos
+• Tabelas criadas a partir de schema.sql
+• Dados de demonstração inseridos
+• Tabelas criadas a partir de schema.sql
+• Dados de demonstração inseridos
+• Tabelas criadas a partir de schema.sql
+• Dados de demonstração inseridos
+• Tabelas criadas a partir de schema.sql
+• Dados de demonstração inseridos
+• Tabelas criadas a partir de schema.sql
+• Dados de demonstração inseridos
+• Tabelas criadas a partir de schema.sql
+• Dados de demonstração inseridos
+• Tabelas criadas a partir de schema.sql
+• Dados de demonstração inseridos
+• Tabelas criadas a partir de schema.sql
+• Dados de demonstração inseridos
+• Tabelas criadas a partir de schema.sql
+• Dados de demonstração inseridos
+codigo de saida dos testes do backend: 0 
+ 
+=== 4) servico de recomendacao: testes do motor e da camada FastAPI === 
+fastapi 0.146.0
+C:\Users\Rafael\Downloads\Eduvance\Eduvance\backend\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient as TestClient  # noqa
+test_atividade_vencendo_ou_atrasada (recomendacao.tests.test_motor.TestMotor.test_atividade_vencendo_ou_atrasada) ... ok
+test_entrada_vazia_nao_quebra (recomendacao.tests.test_motor.TestMotor.test_entrada_vazia_nao_quebra) ... ok
+test_faltas_em_tres_faixas (recomendacao.tests.test_motor.TestMotor.test_faltas_em_tres_faixas) ... ok
+test_frequencia_baixa_por_disciplina_respeita_minimo_de_aulas (recomendacao.tests.test_motor.TestMotor.test_frequencia_baixa_por_disciplina_respeita_minimo_de_aulas) ... ok
+test_media_abaixo_da_aprovacao_gera_reforco_alto (recomendacao.tests.test_motor.TestMotor.test_media_abaixo_da_aprovacao_gera_reforco_alto) ... ok
+test_media_alta_vira_destaque (recomendacao.tests.test_motor.TestMotor.test_media_alta_vira_destaque) ... ok
+test_media_proxima_do_minimo_gera_atencao_media (recomendacao.tests.test_motor.TestMotor.test_media_proxima_do_minimo_gera_atencao_media) ... ok
+test_ordenacao_limite_e_nivel_de_atencao (recomendacao.tests.test_motor.TestMotor.test_ordenacao_limite_e_nivel_de_atencao) ... ok
+test_parametros_personalizados (recomendacao.tests.test_motor.TestMotor.test_parametros_personalizados) ... ok
+test_prova_cruza_agenda_com_notas (recomendacao.tests.test_motor.TestMotor.test_prova_cruza_agenda_com_notas) ... ok
+test_prova_fora_da_janela_ou_passada_e_ignorada (recomendacao.tests.test_motor.TestMotor.test_prova_fora_da_janela_ou_passada_e_ignorada) ... ok
+test_prova_mais_proxima_pesa_mais (recomendacao.tests.test_motor.TestMotor.test_prova_mais_proxima_pesa_mais) ... ok
+test_queda_de_notas_exige_tres_avaliacoes (recomendacao.tests.test_motor.TestMotor.test_queda_de_notas_exige_tres_avaliacoes) ... ok
+test_saida_e_deterministica (recomendacao.tests.test_motor.TestMotor.test_saida_e_deterministica) ... ok
+test_health (recomendacao.tests.test_servico.TestServico.test_health) ... ok
+test_openapi_documenta_o_contrato (recomendacao.tests.test_servico.TestServico.test_openapi_documenta_o_contrato) ... ok
+test_recomendar (recomendacao.tests.test_servico.TestServico.test_recomendar) ... ok
+test_validacao_rejeita_nota_fora_da_faixa (recomendacao.tests.test_servico.TestServico.test_validacao_rejeita_nota_fora_da_faixa) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.070s
+
+OK
+codigo de saida dos testes da recomendacao: 0 
+ 
+=== 5) servico no ar (uvicorn, porta 8011) === 
+GET /health -> {"status":"ok","servico":"recomendacao","versao":"1.0.0"}
+POST /recomendar -> {"itens":[{"tipo":"REFORCO","prioridade":"ALTA","score":72.0,"titulo":"Reforço em Matematica","mensagem":"Sua média em Matematica está em 4,5 — faltam 1,5 ponto(s) para a média 6,0. Revise os conteúdos já avaliados e procure o professor para tirar dúvidas.","disciplina":"Matematica","motivo":{"media":4.5,"mediaAprovacao":6.0},"link":"/boletim"}],"resumo":{"nivel":"CUIDADO","altas":1,"total":1}}
+ 
+=== fim === 
