@@ -78,7 +78,7 @@ function Detalhe({ id }: { id: number }) {
           </table>
         </div>
         {!b.disciplinas.length && <Empty>Nenhuma disciplina vinculada à turma do aluno.</Empty>}
-        <p className="muted" style={{ marginTop: 12, fontSize: 12.5 }}>Média parcial = média dos bimestres com nota; cada bimestre é a média ponderada pelo peso das avaliações. Aprovação com média ≥ {b.mediaAprovacao.toFixed(1)} e frequência ≥ {b.frequenciaMinima.toFixed(0)}%. Clique no nome da disciplina para ver as avaliações.</p>
+        <p className="muted" style={{ marginTop: 12, fontSize: '0.78rem' }}>Média parcial = média dos bimestres com nota; cada bimestre é a média ponderada pelo peso das avaliações. Aprovação com média ≥ {b.mediaAprovacao.toFixed(1)} e frequência ≥ {b.frequenciaMinima.toFixed(0)}%. Clique no nome da disciplina para ver as avaliações.</p>
       </Card>
     </>
   );

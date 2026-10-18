@@ -1,9 +1,10 @@
 import { useAuth } from '../auth';
-import { diaMes, quando } from '../format';
+import { quando } from '../format';
 import { Icon } from '../icons';
 import { Link } from '../router';
 import type { DashCoordenador as D } from '../types';
 import { Badge, Card, Empty, ErrorBox, Loading, PageHeader, Tone, useApi } from '../ui';
+import { ProximosCompromissos } from './agenda-comum';
 
 export default function DashCoordenador() {
   const { user } = useAuth();
@@ -61,17 +62,7 @@ export default function DashCoordenador() {
               </Card>
             </div>
             <div className="col">
-              <Card title="Agenda Escolar">
-                <div className="list">
-                  {d.eventos.map((e) => (
-                    <div className="evento" key={e.id}>
-                      <span className="date-chip">{diaMes(e.inicio)}</span>
-                      <div><strong>{e.titulo}</strong><br /><small className="muted">{e.descricao}</small></div>
-                    </div>
-                  ))}
-                  {!d.eventos.length && <Empty>Nenhum evento futuro cadastrado.</Empty>}
-                </div>
-              </Card>
+              <ProximosCompromissos compromissos={d.compromissos} semAulaHoje={d.semAulaHoje} />
               <Card title="Notificações de Ocorrências" action={<Link to="/ocorrencias" className="card-link">Ver todas</Link>}>
                 <div className="list">
                   {d.ocorrencias.map((o) => (

@@ -5,6 +5,10 @@ import { casa, Link, usePath } from './router';
 import { NAV, Shell } from './Shell';
 import type { Perfil } from './types';
 import { Loading } from './ui';
+import Agenda from './pages/Agenda';
+import Calendario from './pages/Calendario';
+import Configuracoes from './pages/Configuracoes';
+import Provas from './pages/Provas';
 import Atividades from './pages/Atividades';
 import Boletim from './pages/Boletim';
 import Comunicados from './pages/Comunicados';
@@ -43,6 +47,8 @@ function Mensagem({ icone, titulo, texto, pb }: { icone: 'hourglass' | 'lock' | 
   );
 }
 
+const TODOS: Perfil[] = ['ADMIN', 'COORDENADOR', 'PROFESSOR', 'ALUNO', 'RESPONSAVEL'];
+
 /** Rotas implementadas, com os perfis autorizados (controle de acesso também na interface). */
 const ROTAS: { path: string; perfis: Perfil[]; el: (p: Perfil, params: Record<string, string>) => ReactNode }[] = [
   { path: '/', perfis: ['ADMIN', 'COORDENADOR', 'PROFESSOR', 'ALUNO', 'RESPONSAVEL'], el: (p) => <Home perfil={p} /> },
@@ -60,6 +66,10 @@ const ROTAS: { path: string; perfis: Perfil[]; el: (p: Perfil, params: Record<st
   { path: '/ocorrencias/:id', perfis: ['ADMIN', 'COORDENADOR', 'PROFESSOR', 'ALUNO', 'RESPONSAVEL'], el: (_p, r) => <Ocorrencias id={Number(r.id)} /> },
   { path: '/notificacoes', perfis: ['ADMIN', 'COORDENADOR', 'PROFESSOR', 'ALUNO', 'RESPONSAVEL'], el: () => <Notificacoes /> },
   { path: '/vestibular', perfis: ['ALUNO'], el: () => <Vestibular /> },
+  { path: '/agenda', perfis: TODOS, el: () => <Agenda /> },
+  { path: '/provas', perfis: TODOS, el: () => <Provas /> },
+  { path: '/calendario', perfis: TODOS, el: () => <Calendario /> },
+  { path: '/configuracoes', perfis: TODOS, el: () => <Configuracoes /> },
 ];
 
 export default function App() {

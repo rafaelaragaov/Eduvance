@@ -5,6 +5,8 @@ import { Icon } from '../icons';
 import { Link } from '../router';
 import type { DashResponsavel as D, ResumoAluno } from '../types';
 import { Avatar, Badge, Card, Empty, ErrorBox, Loading, PageHeader, useApi } from '../ui';
+import { ProximosCompromissos } from './agenda-comum';
+import CardRecomendacoes from './Recomendacoes';
 
 export default function DashResponsavel() {
   const { user } = useAuth();
@@ -38,12 +40,15 @@ export default function DashResponsavel() {
             {!d.alunos.length && <Card><Empty>Nenhum aluno vinculado à sua conta. Procure a secretaria.</Empty></Card>}
           </div>
 
+          <ProximosCompromissos compromissos={d.compromissos} semAulaHoje={d.semAulaHoje} />
+
           {sel && (
             <>
               {carR && !r && <Loading />}
               {erroR && <ErrorBox erro={erroR} />}
               {r && (
                 <div className="grid-2">
+                  <div className="col">
                   <Card title={`Boletim Rápido: ${aluno?.nome.split(' ')[0]}`} action={<Link to="/boletim" className="card-link">Histórico Completo</Link>}>
                     <table className="table">
                       <tbody>
@@ -52,13 +57,15 @@ export default function DashResponsavel() {
                             <td style={{ borderTop: 0, borderBottom: '1px solid var(--line)' }}>
                               <strong>{b.materia}</strong><br /><small className="muted">{b.frequencia === null ? '—' : `${b.frequencia}%`} freq.</small>
                             </td>
-                            <td className="num" style={{ borderTop: 0, borderBottom: '1px solid var(--line)', fontSize: 16 }}>{nota(b.nota)}</td>
+                            <td className="num" style={{ borderTop: 0, borderBottom: '1px solid var(--line)', fontSize: '1rem' }}>{nota(b.nota)}</td>
                             <td style={{ borderTop: 0, borderBottom: '1px solid var(--line)' }}><Badge tone={b.status === 'Aprovado' ? 'green' : b.status === 'Recuperação' ? 'red' : 'gray'}>{b.status}</Badge></td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </Card>
+                    <CardRecomendacoes key={sel} idAluno={sel} />
+                  </div>
 
                   <div className="col">
                     <Card title="Mensalidades & Financeiro">

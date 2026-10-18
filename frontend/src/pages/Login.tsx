@@ -3,7 +3,7 @@ import { ApiError } from '../api';
 import { useAuth } from '../auth';
 import { Icon } from '../icons';
 import { navigate } from '../router';
-import { BotaoTema } from '../theme';
+import { BotaoTema } from '../prefs';
 import { Logo } from '../ui';
 
 declare const __DEMO__: boolean;

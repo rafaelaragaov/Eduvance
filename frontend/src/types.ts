@@ -49,6 +49,8 @@ export interface AtividadeResumo {
 }
 
 export interface DashAluno {
+  compromissos: Compromisso[];
+  semAulaHoje: string | null;
   perfil: 'ALUNO';
   mediaGeral: number | null;
   classificacaoMedia: string;
@@ -72,12 +74,16 @@ export interface TurmaCard {
 }
 
 export interface DashProfessor {
+  compromissos: Compromisso[];
+  semAulaHoje: string | null;
   perfil: 'PROFESSOR';
   turmas: TurmaCard[];
   aulasHoje: Aula[];
 }
 
 export interface DashCoordenador {
+  compromissos: Compromisso[];
+  semAulaHoje: string | null;
   perfil: 'COORDENADOR';
   kpis: { professoresAtivos: number; ocorrenciasAbertas: number; taxaFrequencia: number | null; metaFrequencia: number };
   professores: { id: number; nome: string; disciplina: string }[];
@@ -96,11 +102,15 @@ export interface AlunoVinculado {
 }
 
 export interface DashResponsavel {
+  compromissos: Compromisso[];
+  semAulaHoje: string | null;
   perfil: 'RESPONSAVEL';
   alunos: AlunoVinculado[];
 }
 
 export interface DashAdmin {
+  compromissos: Compromisso[];
+  semAulaHoje: string | null;
   perfil: 'ADMIN';
   usuariosPorPerfil: Record<string, number>;
   turmas: number;
@@ -279,10 +289,100 @@ export interface Ocorrencia {
 
 export interface Notificacao {
   id: number;
-  tipo: 'COMUNICADO' | 'OCORRENCIA' | 'FREQUENCIA';
+  tipo: 'COMUNICADO' | 'OCORRENCIA' | 'FREQUENCIA' | 'AGENDA';
   titulo: string;
   mensagem: string;
   link: string | null;
   lida: boolean;
   criadaEm: string;
+}
+
+// ---------- Módulo Agenda e Calendário Escolar (Sprint 06) ----------
+export type TipoItemAgenda = 'AULA' | 'ATIVIDADE' | 'AVALIACAO' | 'EVENTO';
+export type TipoEvento = 'EVENTO' | 'REUNIAO' | 'CONSELHO' | 'FERIADO' | 'RECESSO';
+
+export interface ItemAgenda {
+  id: string;
+  refId?: number;
+  tipo: TipoItemAgenda;
+  /** AULA | ATIVIDADE | PROVA/TRABALHO/TESTE/PROJETO (avaliações) | tipo do evento */
+  categoria: string;
+  titulo: string;
+  descricao?: string | null;
+  inicio: string;
+  fim: string | null;
+  diaInteiro: boolean;
+  turma?: string | null;
+  disciplina?: string | null;
+  professor?: string | null;
+  sala?: string | null;
+  aluno: string | null;
+  idAluno: number | null;
+  status?: 'PENDENTE' | 'ENTREGUE' | 'CORRIGIDA' | null;
+  nota?: number | null;
+  bimestre?: number;
+  publico?: PublicoComunicado;
+  link: string;
+}
+
+export type Compromisso = Pick<ItemAgenda, 'id' | 'tipo' | 'categoria' | 'titulo' | 'inicio' | 'fim' | 'diaInteiro' | 'turma' | 'disciplina' | 'aluno' | 'status' | 'link'>;
+
+export interface Evento {
+  id: number;
+  titulo: string;
+  descricao: string | null;
+  tipo: TipoEvento;
+  publico: PublicoComunicado;
+  idTurma: number | null;
+  turma: string | null;
+  inicio: string;
+  fim: string | null;
+  diaInteiro: boolean;
+  data: string;
+  hora: string | null;
+  dataFim: string | null;
+  horaFim: string | null;
+  autor: string;
+  podeAlterar: boolean;
+  notificados?: number;
+}
+
+export interface ProvaCalendario {
+  id: number;
+  titulo: string;
+  tipo: TipoAvaliacao;
+  bimestre: number;
+  peso: number;
+  data: string;
+  idTurmaDisciplina: number;
+  turma: string;
+  disciplina: string;
+  professor: string | null;
+  notasLancadas: number;
+  nota: number | null;
+  diasRestantes: number;
+  aluno: string | null;
+  idAluno: number | null;
+  podeRemarcar: boolean;
+}
+
+export type TipoRecomendacao = 'REFORCO' | 'PROVA' | 'FREQUENCIA' | 'ATIVIDADE' | 'DESTAQUE';
+
+export interface Recomendacao {
+  tipo: TipoRecomendacao;
+  prioridade: 'ALTA' | 'MEDIA' | 'BAIXA';
+  score: number;
+  titulo: string;
+  mensagem: string;
+  disciplina: string | null;
+  motivo: Record<string, number | string | null>;
+  link: string;
+}
+
+export interface Recomendacoes {
+  idAluno: number;
+  origem: 'servico' | 'motor' | 'motor-fallback';
+  geradaEm: string;
+  itens: Recomendacao[];
+  resumo: { nivel: 'TRANQUILO' | 'CUIDADO' | 'ATENCAO'; altas: number; total: number };
 }

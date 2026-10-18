@@ -10,6 +10,7 @@ const tom: Record<Notificacao['tipo'], { tone: Tone; r: string }> = {
   COMUNICADO: { tone: 'blue', r: 'Comunicado' },
   OCORRENCIA: { tone: 'amber', r: 'Ocorrência' },
   FREQUENCIA: { tone: 'red', r: 'Frequência' },
+  AGENDA: { tone: 'teal', r: 'Agenda' },
 };
 
 /** Central de notificações do usuário. */

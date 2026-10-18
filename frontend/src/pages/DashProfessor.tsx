@@ -6,6 +6,7 @@ import type { DashProfessor as D, TurmaDisciplina } from '../types';
 import { Badge, Card, Empty, ErrorBox, Loading, PageHeader, Tone, useApi } from '../ui';
 import AtividadeForm from './AtividadeForm';
 import NotasRapido from './NotasRapido';
+import { ProximosCompromissos } from './agenda-comum';
 
 const aulaTone: Record<string, Tone> = { 'Concluída': 'green', 'Em andamento': 'amber', 'Próxima': 'blue' };
 
@@ -44,6 +45,7 @@ export default function DashProfessor() {
               </Card>
             </div>
             <div className="col">
+              <ProximosCompromissos compromissos={d.compromissos} semAulaHoje={d.semAulaHoje} />
               <Card title="Aulas de Hoje (Cronograma)">
                 {d.aulasHoje.map((a) => (
                   <div className="agenda-item" key={a.idHorario}>

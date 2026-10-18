@@ -7,14 +7,20 @@
     <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#f1f7f7" />
     <script>
-      /* Aplica o tema antes da pintura para evitar o "flash" de tela clara. */
+      /* Aplica tema e tamanho do texto antes da primeira pintura (sem "flash" de tela clara / texto que pula de tamanho). */
       (function () {
-        var t = null;
-        try { t = localStorage.getItem('eduvance:tema'); } catch (e) {}
-        if (t !== 'dark' && t !== 'light') t = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', t);
+        var f = 100, t = 'auto';
+        try {
+          var j = JSON.parse(localStorage.getItem('eduvance:prefs') || 'null');
+          if (j) { if ([85, 100, 115, 130, 150].indexOf(j.fonte) > -1) f = j.fonte; if (['claro', 'escuro', 'auto'].indexOf(j.tema) > -1) t = j.tema; }
+          else { var o = localStorage.getItem('eduvance:tema'); if (o === 'dark') t = 'escuro'; else if (o === 'light') t = 'claro'; }
+        } catch (e) {}
+        var escuro = t === 'escuro' || (t === 'auto' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
+        var r = document.documentElement;
+        r.setAttribute('data-theme', escuro ? 'dark' : 'light');
+        r.setAttribute('data-fonte', String(f));
         var m = document.querySelector('meta[name="theme-color"]');
-        if (m) m.setAttribute('content', t === 'dark' ? '#0c181b' : '#f1f7f7');
+        if (m) m.setAttribute('content', escuro ? '#0c181b' : '#f1f7f7');
       })();
     </script>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />

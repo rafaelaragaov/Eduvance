@@ -72,7 +72,7 @@ export default function Vestibular() {
                 {d.simulados.map((s) => (
                   <div className="simulado" key={s.id}>
                     <span className="ico"><Icon name="book" size={22} /></span>
-                    <div className="info"><strong>{s.titulo}</strong><small className="muted">Realizado em {diaMes(s.data)}</small><br /><strong style={{ fontSize: 14 }}>{s.pontuacao} / 1000 pts</strong></div>
+                    <div className="info"><strong>{s.titulo}</strong><small className="muted">Realizado em {diaMes(s.data)}</small><br /><strong style={{ fontSize: '0.875rem' }}>{s.pontuacao} / 1000 pts</strong></div>
                     <Badge tone={tom(s.classificacao)}>{s.classificacao}</Badge>
                   </div>
                 ))}

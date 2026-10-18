@@ -1,9 +1,9 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { useAuth } from './auth';
 import { rotuloPerfil } from './format';
 import { Icon, IconName } from './icons';
 import { Link, navigate, usePath } from './router';
-import { BotaoTema } from './theme';
+import { BotaoTema } from './prefs';
 import { Avatar, Logo, SinoNotificacoes } from './ui';
 import type { Perfil } from './types';
 
@@ -19,9 +19,10 @@ export const NAV: Record<Perfil, NavItem[]> = {
   ALUNO: [
     { to: '/', label: 'Dashboard', icon: 'grid' },
     { to: '/boletim', label: 'Boletim', icon: 'book' },
-    { to: '/agenda', label: 'Agenda', icon: 'calendar', pb: 'PB13' },
+    { to: '/agenda', label: 'Agenda', icon: 'calendar' },
     { to: '/atividades', label: 'Atividades', icon: 'file' },
-    { to: '/provas', label: 'Provas', icon: 'bookmark', pb: 'PB16' },
+    { to: '/provas', label: 'Provas', icon: 'bookmark' },
+    { to: '/calendario', label: 'Calendário Escolar', icon: 'calendar' },
     { to: '/comunicados', label: 'Comunicados', icon: 'message' },
     { to: '/ocorrencias', label: 'Ocorrências', icon: 'alert' },
     { to: '/vestibular', label: 'Vestibular', icon: 'award' },
@@ -29,7 +30,9 @@ export const NAV: Record<Perfil, NavItem[]> = {
   PROFESSOR: [
     { to: '/', label: 'Dashboard', icon: 'grid' },
     { to: '/turmas', label: 'Minhas Turmas', icon: 'users', pb: 'PB07' },
+    { to: '/agenda', label: 'Agenda', icon: 'calendar' },
     { to: '/avaliacoes', label: 'Avaliações', icon: 'bookmark' },
+    { to: '/provas', label: 'Calendário de Provas', icon: 'clock' },
     { to: '/notas', label: 'Lançar Notas', icon: 'edit' },
     { to: '/frequencia', label: 'Frequência', icon: 'checkCircle' },
     { to: '/atividades', label: 'Atividades', icon: 'file' },
@@ -40,7 +43,7 @@ export const NAV: Record<Perfil, NavItem[]> = {
   COORDENADOR: [
     { to: '/', label: 'Dashboard', icon: 'grid' },
     { to: '/professores', label: 'Professores', icon: 'users' },
-    { to: '/agenda', label: 'Agenda Escolar', icon: 'calendar', pb: 'PB13' },
+    { to: '/agenda', label: 'Agenda Escolar', icon: 'calendar' },
     { to: '/avaliacoes', label: 'Avaliações', icon: 'bookmark' },
     { to: '/notas', label: 'Notas', icon: 'file' },
     { to: '/frequencia', label: 'Frequência', icon: 'checkCircle' },
@@ -48,7 +51,9 @@ export const NAV: Record<Perfil, NavItem[]> = {
     { to: '/atividades', label: 'Atividades', icon: 'edit' },
     { to: '/ocorrencias', label: 'Ocorrências', icon: 'alert' },
     { to: '/comunicados', label: 'Comunicados', icon: 'message' },
-    { to: '/horarios', label: 'Horários', icon: 'clock', pb: 'PB22' },
+    { to: '/provas', label: 'Calendário de Provas', icon: 'clock' },
+    { to: '/calendario', label: 'Calendário Escolar', icon: 'calendar' },
+    { to: '/horarios', label: 'Horários', icon: 'repeat', pb: 'PB22' },
   ],
   RESPONSAVEL: [
     { to: '/', label: 'Dashboard', icon: 'grid' },
@@ -58,13 +63,18 @@ export const NAV: Record<Perfil, NavItem[]> = {
     { to: '/atividades', label: 'Atividades', icon: 'file' },
     { to: '/ocorrencias', label: 'Ocorrências', icon: 'alert' },
     { to: '/comunicados', label: 'Comunicados', icon: 'message' },
-    { to: '/calendario', label: 'Calendário', icon: 'calendar', pb: 'PB17' },
+    { to: '/agenda', label: 'Agenda', icon: 'calendar' },
+    { to: '/provas', label: 'Calendário de Provas', icon: 'clock' },
+    { to: '/calendario', label: 'Calendário Escolar', icon: 'calendar' },
   ],
   ADMIN: [
     { to: '/', label: 'Dashboard', icon: 'grid' },
     { to: '/usuarios', label: 'Usuários', icon: 'users' },
+    { to: '/agenda', label: 'Agenda Escolar', icon: 'calendar' },
+    { to: '/calendario', label: 'Calendário Escolar', icon: 'calendar' },
     { to: '/atividades', label: 'Atividades', icon: 'file' },
     { to: '/avaliacoes', label: 'Avaliações', icon: 'bookmark' },
+    { to: '/provas', label: 'Calendário de Provas', icon: 'clock' },
     { to: '/notas', label: 'Notas', icon: 'edit' },
     { to: '/frequencia', label: 'Frequência', icon: 'checkCircle' },
     { to: '/boletim', label: 'Boletins', icon: 'book' },
@@ -83,6 +93,8 @@ const NAV_VESTIBULAR: (NavItem & { ancora?: string })[] = [
   { to: '/vestibular/desempenho', label: 'Meu Desempenho', icon: 'award', pb: 'PB30' },
 ];
 
+const Breve = ({ pb }: { pb?: string }) => (pb ? <span className="nav-breve">Em breve</span> : null);
+
 function ativo(path: string, to: string) {
   return to === '/' ? path === '/' : path === to || path.startsWith(to + '/');
 }
@@ -96,6 +108,11 @@ export function Shell({ children }: { children: ReactNode }) {
   const { user, logout } = useAuth();
   const path = usePath();
   const [maisAberto, setMaisAberto] = useState(false);
+  useEffect(() => {
+    const item = [...Object.values(NAV).flat(), ...NAV_VESTIBULAR].find((i) => ativo(path, i.to) && i.to !== '/');
+    const nome = path === '/configuracoes' ? 'Configurações' : path === '/' ? 'Dashboard' : item?.label;
+    document.title = nome ? `${nome} · Eduvance` : 'Eduvance';
+  }, [path]);
   if (!user) return null;
 
   const naVestibular = user.perfil === 'ALUNO' && path.startsWith('/vestibular');
@@ -105,6 +122,7 @@ export function Shell({ children }: { children: ReactNode }) {
 
   return (
     <div className="shell">
+      <a href="#conteudo" className="skip-link">Ir para o conteúdo</a>
       <aside className="sidebar">
         <div className="sidebar-top"><Logo /></div>
         <nav aria-label="Navegação principal">
@@ -113,11 +131,12 @@ export function Shell({ children }: { children: ReactNode }) {
             return (
               <Link key={i.label} to={i.to} className={`nav-item ${on ? 'on' : ''}`}
                 onClick={(e) => { if (i.ancora) { e.preventDefault(); irPara(i.to, i.ancora, path); } }}>
-                <Icon name={i.icon} />{i.label}
+                <Icon name={i.icon} />{i.label}<Breve pb={i.pb} />
               </Link>
             );
           })}
         </nav>
+        <Link to="/configuracoes" className={`nav-item nav-config ${ativo(path, '/configuracoes') ? 'on' : ''}`} data-testid="nav-configuracoes"><Icon name="settings" />Configurações</Link>
         <div className="sidebar-user">
           <Avatar nome={user.nome} />
           <div className="who">
@@ -138,7 +157,7 @@ export function Shell({ children }: { children: ReactNode }) {
             <button className="icon-btn" onClick={() => setMaisAberto(true)} aria-label="Menu"><Icon name="grid" size={18} /></button>
           </span>
         </div>
-        <main className="main">{children}</main>
+        <main className="main" id="conteudo" tabIndex={-1}>{children}</main>
       </div>
 
       <nav className="bottom-nav" aria-label="Navegação">
@@ -155,8 +174,9 @@ export function Shell({ children }: { children: ReactNode }) {
           <div className="sheet" onClick={(e) => e.stopPropagation()}>
             <div className="sheet-user"><Avatar nome={user.nome} /><div><strong>{user.nome}</strong><span>{rotuloPerfil[user.perfil]}</span></div></div>
             {resto.map((i) => (
-              <Link key={i.label} to={i.to} className="nav-item" onClick={() => setMaisAberto(false)}><Icon name={i.icon} />{i.label}</Link>
+              <Link key={i.label} to={i.to} className="nav-item" onClick={() => setMaisAberto(false)}><Icon name={i.icon} />{i.label}<Breve pb={i.pb} /></Link>
             ))}
+            <Link to="/configuracoes" className="nav-item" onClick={() => setMaisAberto(false)}><Icon name="settings" />Configurações</Link>
             <button className="nav-item" onClick={logout}><Icon name="logout" />Sair</button>
           </div>
         </div>

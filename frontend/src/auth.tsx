@@ -1,5 +1,6 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { api, tokenStore } from './api';
+import { sincronizarComConta } from './prefs';
 import type { Usuario } from './types';
 
 interface AuthCtx {
@@ -18,7 +19,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!tokenStore.get()) return;
     api<{ usuario: Usuario }>('/auth/me')
-      .then((r) => setUser(r.usuario))
+      .then((r) => { setUser(r.usuario); void sincronizarComConta(); })
       .catch(() => tokenStore.clear())
       .finally(() => setCarregando(false));
   }, []);
@@ -33,6 +34,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const r = await api<{ token: string; usuario: Usuario }>('/auth/login', { method: 'POST', body: { identificador, senha } });
     tokenStore.set(r.token);
     setUser(r.usuario);
+    void sincronizarComConta();
     return r.usuario;
   }, []);
 

@@ -3,6 +3,8 @@ import { diaMesCurto, nota, quando } from '../format';
 import { Link } from '../router';
 import type { DashAluno as D, Urgencia } from '../types';
 import { Badge, Card, Empty, ErrorBox, Loading, PageHeader, Stat, Tone, useApi } from '../ui';
+import { ProximosCompromissos } from './agenda-comum';
+import CardRecomendacoes from './Recomendacoes';
 
 export const urgenciaBadge: Record<Urgencia, { tone: Tone; texto: string }> = {
   ATRASADA: { tone: 'red', texto: 'Atrasada' },
@@ -52,6 +54,8 @@ export default function DashAluno() {
                 {!d.boletim.length && <Empty>Nenhuma disciplina vinculada à sua turma.</Empty>}
               </Card>
 
+              <CardRecomendacoes />
+
               <Card title="Atividades Pendentes" action={<Link to="/atividades" className="card-link">Ver todas</Link>}>
                 <div className="list">
                   {d.atividades.map((a) => {
@@ -72,6 +76,7 @@ export default function DashAluno() {
             </div>
 
             <div className="col">
+              <ProximosCompromissos compromissos={d.compromissos} semAulaHoje={d.semAulaHoje} />
               <Card title="Agenda do Dia">
                 {d.agendaHoje.map((a) => (
                   <div className="agenda-item" key={a.idHorario}>

@@ -1,6 +1,7 @@
 import { Link } from '../router';
 import type { DashAdmin as D } from '../types';
 import { Card, ErrorBox, Loading, PageHeader, Stat, useApi } from '../ui';
+import { ProximosCompromissos } from './agenda-comum';
 
 export default function DashAdmin() {
   const { data: d, erro, carregando, recarregar } = useApi<D>('/dashboard');
@@ -26,6 +27,7 @@ export default function DashAdmin() {
                 ))}
               </div>
             </Card>
+            <ProximosCompromissos compromissos={d.compromissos} semAulaHoje={d.semAulaHoje} />
             <Card title="Atalhos">
               <div className="list">
                 <Link to="/usuarios" className="btn btn-secondary">Cadastrar / editar usuários</Link>
