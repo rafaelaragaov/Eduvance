@@ -11,9 +11,15 @@ frontend/dist/
 # Banco local (gerado por: python -m app.init_db)
 database/*.db
 database/*.db-journal
+database/*.db-wal
+database/*.db-shm
 
 # Ambiente / editor
 .env
 .DS_Store
 .vscode/
 .idea/
+
+# Executável compilado (Sprint 07)
+compilado/
+.venv-compilar/
