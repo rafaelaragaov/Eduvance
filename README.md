@@ -2,7 +2,7 @@
 
 Plataforma que centraliza informações acadêmicas, pedagógicas e administrativas entre escola, professores, alunos e responsáveis, com uma área de preparação para vestibulares.
 
-**Disciplina:** Fábrica de Software · **Turma:** 8NB · **Estado:** Sprint 06 — terceiro módulo (Agenda e Calendário Escolar), integração entre módulos, Configurações (tamanho da fonte), serviço de recomendação e PostgreSQL
+**Disciplina:** Fábrica de Software · **Turma:** 8NB · **Estado:** Sprint 07 — executável compilado (Nuitka) e processamento paralelo em todos os processadores. Sprint 06: terceiro módulo (Agenda e Calendário Escolar), Configurações, serviço de recomendação e PostgreSQL
 
 | Camada | Tecnologia |
 |---|---|
@@ -24,6 +24,31 @@ Plataforma que centraliza informações acadêmicas, pedagógicas e administrati
 ## Modo escuro
 
 Todas as telas têm tema claro, escuro e automático. O botão de lua/sol alterna o tema que está sendo exibido; a escolha "Automático" fica em **Configurações**. A preferência é salva no navegador (`localStorage`, chave `eduvance:prefs`) e, com a pessoa logada, também na conta; sem escolha salva, o sistema segue o tema do sistema operacional. O tema é aplicado antes da primeira pintura, então não há "flash" de tela clara. As cores são variáveis CSS em `frontend/src/styles.css` (bloco `:root[data-theme='dark']`) e a lógica está em `frontend/src/prefs.tsx`. Evidências e roteiro de teste: `docs/evidencias/dark-mode/`.
+
+## Sprint 07 — Executável compilado e paralelismo
+
+O back-end deixa de rodar como código-fonte: o **Nuitka** traduz o Python em C e gera `eduvance.exe` (a interface React já era compilada pelo esbuild e vai dentro do executável). Sobre ele roda o **processamento paralelo**: um processo por thread lógica do processador.
+
+```bat
+compilar.bat              :: gera compilado\eduvance.dist\eduvance.exe  (5 a 20 min na 1ª vez; usa o compilador Zig, baixado sozinho)
+executar_compilado.bat    :: abre o sistema compilado em http://localhost:5000
+benchmark.bat             :: carga de teste: todos os processadores ocupados (veja no Gerenciador de Tarefas)
+```
+
+O mesmo ponto de entrada serve para código-fonte (`python eduvance.py ...`) e executável (`eduvance.exe ...`):
+
+| Comando | O que faz |
+|---|---|
+| `eduvance.exe` | sobe o sistema (servidor `waitress` com várias threads; cria o banco de demonstração se não existir) |
+| `eduvance.exe --init-db [--reset]` | cria ou recria o banco |
+| `eduvance.exe --benchmark-paralelo --processos auto --segundos 30` | carga de teste: mede 1 processo, depois N processos, e informa vazão, ganho (speedup), eficiência e uso de CPU |
+| `eduvance.exe --recalcular-recomendacoes --processos auto` | recalcula, em paralelo, as recomendações de todos os alunos e grava em `recomendacao_ia` |
+| `eduvance.exe --versao` | mostra se está rodando compilado ou como código-fonte |
+| `--relatorio arquivo.txt` | (nos modos paralelos) também grava o resultado em arquivo |
+
+Por que processos: em Python só uma thread executa código Python por vez em cada processo (GIL), mesmo compilado. As threads do servidor web esperam banco/rede; o cálculo pesado usa `ProcessPoolExecutor` (`backend/app/paralelo.py`). O SQLite passou a usar modo WAL e espera de 15 s por bloqueio, para várias threads gravarem sem erro.
+
+> Compilar não torna o Python mais rápido neste projeto (medido: o motor de recomendação compilado foi mais lento que o código-fonte); o ganho de desempenho vem do paralelismo. Relatório: `docs/SPRINT07.md`.
 
 ## Sprint 06 — Módulo Agenda e Calendário Escolar (PB13, PB16, PB17) e integração
 
@@ -129,6 +154,7 @@ Abra **http://localhost:5000**.
 | `EDUVANCE_DATABASE_URL` | — | se definida (`postgresql://…`), usa PostgreSQL no lugar do SQLite |
 | `EDUVANCE_DATABASE_SCHEMA` | — | schema (search_path) do PostgreSQL, opcional |
 | `EDUVANCE_RECOMENDACAO_URL` | — | URL do serviço FastAPI; vazio = motor embutido |
+| `EDUVANCE_THREADS` | 4 × processadores (máx. 32) | threads de atendimento do servidor `waitress` |
 | `EDUVANCE_JWT_SECRET` | valor de desenvolvimento | **defina em produção** |
 | `EDUVANCE_JWT_HORAS` | `8` | validade do token |
 | `PORT` | `5000` | porta do servidor |
@@ -143,7 +169,7 @@ cd backend && EDUVANCE_DEBUG=1 python run.py      # API com recarga automática
 ### Testes
 
 ```bash
-cd backend && python -m unittest discover -s tests -v    # 111 testes de integração (banco temporário; SQLite e PostgreSQL)
+cd backend && python -m unittest discover -s tests -v    # 121 testes de integração (banco temporário; SQLite e PostgreSQL)
 ```
 
 ## Controle de perfis
@@ -201,9 +227,10 @@ As regras são aplicadas **no servidor** (decorator `@auth_required(...)` + veri
 ## Estrutura do repositório
 
 ```
-backend/            API Flask (app/), testes (tests/), run.py
+backend/            API Flask (app/), testes (tests/), run.py, eduvance.py (ponto de entrada compilável)
   app/routes/       auth, usuarios, atividades, avaliacoes, notas, frequencia, boletim, dashboard, vestibular, catalogo, comunicados, ocorrencias, notificacoes, agenda, eventos, preferencias, recomendacoes
   app/services/     regras acadêmicas e de acesso
+  app/paralelo.py   recálculo em lote e carga de teste com todos os processadores (Sprint 07)
   app/seed.py       dados de demonstração
 frontend/           React + TypeScript (src/), build.mjs
 recomendacao/       serviço de recomendação (motor.py + FastAPI em servico.py) e testes
