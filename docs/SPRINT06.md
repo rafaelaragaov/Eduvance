@@ -3,7 +3,7 @@
 **Módulo entregue:** Agenda e Calendário Escolar — Agenda (PB13), Calendário de Provas (PB16) e Calendário Escolar (PB17)
 **Repositório:** https://github.com/rafaelaragaov/Eduvance · **Turma:** 8NB
 **Integrantes:** Matheus Henrique da Costa Nascimento · Rafael Aragão Vieira · José Gabriel Rocha Barreto · Gabriel do Vale Alcoforado Braga
-**Nº do grupo:** _(informar — o PDF usa "Grupo Eduvance — Turma 8NB" enquanto o número não for confirmado)_
+**Grupo:** Eduvance
 
 > O relatório em PDF (Sprints 01 a 06 + Sprint 06) é montado a partir deste conteúdo e das evidências em `docs/evidencias/sprint06/`. Só o Scrum Master o entrega.
 
@@ -19,7 +19,7 @@
 
 | Apontamento | O que foi feito | Situação | Evidência |
 |---|---|---|---|
-| Número do grupo / divergência de integrantes (Alexandre) | Composição atual documentada em `docs/CONTRIBUICOES.md`; PDFs antigos não reescritos, nota de esclarecimento na capa do consolidado | **Parcial** — falta o número do grupo | `docs/CONTRIBUICOES.md` |
+| Identificação do grupo e divergência de integrantes (Alexandre) | Composição atual documentada em `docs/CONTRIBUICOES.md`; PDFs antigos não reescritos, nota de esclarecimento na capa do consolidado | **Corrigido** | `docs/CONTRIBUICOES.md` |
 | Roteiro E2E da Sprint 03 instável | Trocadas as esperas fixas por esperas explícitas; 17/17 estável | Corrigido | `docs/evidencias/sprint03/roteiro_e2e_resultado.txt` |
 | Mostrar `npm run typecheck` real | Executado no PC do grupo em 18/10/2026 por `verificar.bat`: `tsc --noEmit` com código de saída 0, sem erros (a checagem parcial do ambiente de desenvolvimento foi substituída) | Corrigido | `verificacao_pc.txt` |
 | Manter testes dos módulos anteriores | Suíte única: 111 testes; roteiros de navegador das Sprints 03, 05 e do modo escuro reexecutados | Corrigido | `testes_backend_*.txt`, `roteiro_e2e_resultado*.txt` |
