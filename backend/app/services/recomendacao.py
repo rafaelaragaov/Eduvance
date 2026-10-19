@@ -83,9 +83,8 @@ def consultar(dados: dict) -> tuple[dict, str]:
         return motor.gerar(dados), "motor-fallback"
 
 
-def gerar_e_salvar(id_aluno: int) -> dict:
-    dados = coletar(id_aluno)
-    resultado, origem = consultar(dados)
+def salvar(id_aluno: int, resultado: dict, origem: str) -> dict:
+    """Grava o resultado em `recomendacao_ia` (substitui as anteriores do aluno) e monta a resposta da API."""
     disc = {r["nome"]: r["id"] for r in rows("SELECT id_disciplina AS id, nome FROM disciplina")}
     with transacao() as con:
         con.execute("DELETE FROM recomendacao_ia WHERE id_aluno = ?", (id_aluno,))
@@ -97,3 +96,8 @@ def gerar_e_salvar(id_aluno: int) -> dict:
                  json.dumps(i.get("motivo") or {}, ensure_ascii=False), i.get("link"), "servico" if origem == "servico" else "motor"),
             )
     return {"idAluno": id_aluno, "origem": origem, "geradaEm": datetime.now().isoformat(timespec="seconds"), **resultado}
+
+
+def gerar_e_salvar(id_aluno: int) -> dict:
+    resultado, origem = consultar(coletar(id_aluno))
+    return salvar(id_aluno, resultado, origem)
