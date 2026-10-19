@@ -1,0 +1,133 @@
+test_agenda_do_aluno_so_tem_a_propria_turma (test_agenda.TestAgenda.test_agenda_do_aluno_so_tem_a_propria_turma) ... ok
+test_agenda_junta_atividades_provas_e_eventos_com_link (test_agenda.TestAgenda.test_agenda_junta_atividades_provas_e_eventos_com_link) ... ok
+test_aluno_entrega_atividade_e_agenda_reflete (test_agenda.TestAgenda.test_aluno_entrega_atividade_e_agenda_reflete) ... ok
+test_dashboard_traz_compromissos_para_todos_os_perfis (test_agenda.TestAgenda.test_dashboard_traz_compromissos_para_todos_os_perfis) ... ok
+test_professor_e_coordenacao (test_agenda.TestAgenda.test_professor_e_coordenacao) ... ok
+test_responsavel_ve_a_turma_de_cada_filho (test_agenda.TestAgenda.test_responsavel_ve_a_turma_de_cada_filho) ... ok
+test_validacoes_da_consulta (test_agenda.TestAgenda.test_validacoes_da_consulta) ... ok
+test_aluno_ve_proximas_provas_da_propria_turma (test_agenda.TestCalendarioDeProvas.test_aluno_ve_proximas_provas_da_propria_turma) ... ok
+test_editar_sem_mudar_a_data_nao_reaplica_regras (test_agenda.TestCalendarioDeProvas.test_editar_sem_mudar_a_data_nao_reaplica_regras)
+Regressão: avaliações antigas (inclusive em fim de semana/feriado) continuam editáveis (título/peso). ... ok
+test_lancar_notas_nao_escolhe_avaliacao_futura (test_agenda.TestCalendarioDeProvas.test_lancar_notas_nao_escolhe_avaliacao_futura)
+Regressão da integração Calendário × Notas: a tela de lançamento abre na última avaliação já realizada. ... ok
+test_nao_remarca_avaliacao_com_notas (test_agenda.TestCalendarioDeProvas.test_nao_remarca_avaliacao_com_notas) ... ok
+test_regras_de_data_da_avaliacao (test_agenda.TestCalendarioDeProvas.test_regras_de_data_da_avaliacao) ... ok
+test_remarcar_avisa_alunos_e_responsaveis_e_persiste (test_agenda.TestCalendarioDeProvas.test_remarcar_avisa_alunos_e_responsaveis_e_persiste) ... ok
+test_remarcar_rbac_e_regras (test_agenda.TestCalendarioDeProvas.test_remarcar_rbac_e_regras) ... ok
+test_responsavel_com_dois_filhos_em_turmas_diferentes (test_agenda.TestCalendarioDeProvas.test_responsavel_com_dois_filhos_em_turmas_diferentes) ... ok
+test_crud_completo_e_persistencia (test_agenda.TestEventos.test_crud_completo_e_persistencia) ... ok
+test_evento_repetido (test_agenda.TestEventos.test_evento_repetido) ... ok
+test_feriado_de_hoje_zera_a_agenda_do_dashboard (test_agenda.TestEventos.test_feriado_de_hoje_zera_a_agenda_do_dashboard) ... ok
+test_feriado_suspende_aulas_do_dia_no_servico (test_agenda.TestEventos.test_feriado_suspende_aulas_do_dia_no_servico)
+Mesma regra do dashboard, sem depender do dia da semana: aulas_do_dia numa segunda-feira com feriado. ... ok
+test_feriado_suspende_aulas_e_nao_cobre_dia_com_prova (test_agenda.TestEventos.test_feriado_suspende_aulas_e_nao_cobre_dia_com_prova) ... ok
+test_rbac (test_agenda.TestEventos.test_rbac) ... ok
+test_recesso_de_varios_dias (test_agenda.TestEventos.test_recesso_de_varios_dias) ... ok
+test_validacoes (test_agenda.TestEventos.test_validacoes) ... ok
+test_visibilidade_por_publico (test_agenda.TestEventos.test_visibilidade_por_publico) ... ok
+test_lembrete_some_quando_a_atividade_e_entregue (test_agenda.TestLembretes.test_lembrete_some_quando_a_atividade_e_entregue) ... ok
+test_lembretes_de_atividade_pendente_sem_repeticao (test_agenda.TestLembretes.test_lembretes_de_atividade_pendente_sem_repeticao) ... ok
+test_professor_nao_recebe_lembretes (test_agenda.TestLembretes.test_professor_nao_recebe_lembretes) ... ok
+test_padrao_e_atualizacao_persistente (test_agenda.TestPreferencias.test_padrao_e_atualizacao_persistente) ... ok
+test_validacoes_e_isolamento (test_agenda.TestPreferencias.test_validacoes_e_isolamento) ... ok
+test_ciclo_completo_e_persistencia (test_api.TestAvaliacoes.test_ciclo_completo_e_persistencia) ... ok
+test_nao_exclui_avaliacao_com_notas (test_api.TestAvaliacoes.test_nao_exclui_avaliacao_com_notas) ... ok
+test_rbac (test_api.TestAvaliacoes.test_rbac) ... ok
+test_titulo_duplicado_no_bimestre (test_api.TestAvaliacoes.test_titulo_duplicado_no_bimestre) ... ok
+test_validacoes (test_api.TestAvaliacoes.test_validacoes) ... ok
+test_health_conexao_banco (test_api.TestBancoELogin.test_health_conexao_banco) ... ok
+test_login_aluno_por_matricula (test_api.TestBancoELogin.test_login_aluno_por_matricula) ... ok
+test_login_campos_obrigatorios (test_api.TestBancoELogin.test_login_campos_obrigatorios) ... ok
+test_login_email_case_insensitive (test_api.TestBancoELogin.test_login_email_case_insensitive) ... ok
+test_login_por_email (test_api.TestBancoELogin.test_login_por_email) ... ok
+test_login_senha_errada_e_usuario_inexistente (test_api.TestBancoELogin.test_login_senha_errada_e_usuario_inexistente) ... ok
+test_me (test_api.TestBancoELogin.test_me) ... ok
+test_rota_protegida_sem_token (test_api.TestBancoELogin.test_rota_protegida_sem_token) ... ok
+test_senha_nao_e_texto_puro (test_api.TestBancoELogin.test_senha_nao_e_texto_puro) ... ok
+test_usuario_inativo_nao_loga (test_api.TestBancoELogin.test_usuario_inativo_nao_loga) ... ok
+test_boletim_do_aluno_bate_com_o_seed (test_api.TestBoletimCompleto.test_boletim_do_aluno_bate_com_o_seed) ... ok
+test_catalogo_de_alunos_por_perfil (test_api.TestBoletimCompleto.test_catalogo_de_alunos_por_perfil) ... ok
+test_media_ponderada_responde_a_novas_notas (test_api.TestBoletimCompleto.test_media_ponderada_responde_a_novas_notas) ... ok
+test_rbac_do_boletim (test_api.TestBoletimCompleto.test_rbac_do_boletim) ... ok
+test_admin_cadastra_cada_perfil (test_api.TestCadastroEPerfis.test_admin_cadastra_cada_perfil) ... ok
+test_aluno_com_no_maximo_dois_responsaveis (test_api.TestCadastroEPerfis.test_aluno_com_no_maximo_dois_responsaveis) ... ok
+test_atualizar_e_excluir_usuario (test_api.TestCadastroEPerfis.test_atualizar_e_excluir_usuario) ... ok
+test_email_e_matricula_duplicados (test_api.TestCadastroEPerfis.test_email_e_matricula_duplicados) ... ok
+test_rbac_cadastro_de_usuarios (test_api.TestCadastroEPerfis.test_rbac_cadastro_de_usuarios) ... ok
+test_validacoes_de_cadastro (test_api.TestCadastroEPerfis.test_validacoes_de_cadastro) ... ok
+test_aluno_e_responsavel_somente_leitura (test_api.TestCrudAtividades.test_aluno_e_responsavel_somente_leitura) ... ok
+test_aluno_marca_entrega (test_api.TestCrudAtividades.test_aluno_marca_entrega) ... ok
+test_ciclo_completo_crud (test_api.TestCrudAtividades.test_ciclo_completo_crud) ... ok
+test_professor_nao_gerencia_turma_de_outro (test_api.TestCrudAtividades.test_professor_nao_gerencia_turma_de_outro) ... ok
+test_validacao_atividade (test_api.TestCrudAtividades.test_validacao_atividade) ... ok
+test_chamada_persistente_e_atualizacao (test_api.TestFrequencia.test_chamada_persistente_e_atualizacao) ... ok
+test_faltas_acumuladas_e_alerta (test_api.TestFrequencia.test_faltas_acumuladas_e_alerta) ... ok
+test_rbac_da_chamada (test_api.TestFrequencia.test_rbac_da_chamada) ... ok
+test_validacoes_da_chamada (test_api.TestFrequencia.test_validacoes_da_chamada) ... ok
+test_dashboard_aluno_bate_com_prototipo (test_api.TestNotasEDashboards.test_dashboard_aluno_bate_com_prototipo) ... ok
+test_dashboard_por_perfil (test_api.TestNotasEDashboards.test_dashboard_por_perfil) ... ok
+test_lancamento_de_notas (test_api.TestNotasEDashboards.test_lancamento_de_notas) ... ok
+test_notas_rbac (test_api.TestNotasEDashboards.test_notas_rbac) ... ok
+test_resumo_do_aluno_respeita_vinculo (test_api.TestNotasEDashboards.test_resumo_do_aluno_respeita_vinculo) ... ok
+test_vestibular (test_api.TestNotasEDashboards.test_vestibular) ... ok
+test_lancamento_persistente_e_media (test_api.TestNotasEmLote.test_lancamento_persistente_e_media) ... ok
+test_rbac_do_lancamento (test_api.TestNotasEmLote.test_rbac_do_lancamento) ... ok
+test_validacao_atomica (test_api.TestNotasEmLote.test_validacao_atomica) ... ok
+test_ciclo_completo_leitura_e_persistencia (test_comunicacao.TestComunicados.test_ciclo_completo_leitura_e_persistencia) ... ok
+test_comunicado_repetido_e_conflito (test_comunicacao.TestComunicados.test_comunicado_repetido_e_conflito) ... ok
+test_edicao_exclusao_e_publico_imutavel (test_comunicacao.TestComunicados.test_edicao_exclusao_e_publico_imutavel) ... ok
+test_permissoes_de_publicacao (test_comunicacao.TestComunicados.test_permissoes_de_publicacao) ... ok
+test_validacoes (test_comunicacao.TestComunicados.test_validacoes) ... ok
+test_visibilidade_por_publico (test_comunicacao.TestComunicados.test_visibilidade_por_publico) ... ok
+test_abaixo_do_minimo_so_com_aulas_suficientes (test_comunicacao.TestFrequenciaCoerente.test_abaixo_do_minimo_so_com_aulas_suficientes) ... ok
+test_nao_encontrado_concorda_com_o_genero (test_comunicacao.TestMensagensDeErro.test_nao_encontrado_concorda_com_o_genero) ... ok
+test_alerta_de_frequencia_abaixo_do_minimo_uma_unica_vez (test_comunicacao.TestNotificacoes.test_alerta_de_frequencia_abaixo_do_minimo_uma_unica_vez) ... ok
+test_cada_usuario_acessa_so_as_suas (test_comunicacao.TestNotificacoes.test_cada_usuario_acessa_so_as_suas) ... ok
+test_leitura_individual_e_em_massa (test_comunicacao.TestNotificacoes.test_leitura_individual_e_em_massa) ... ok
+test_dashboard_da_coordenacao_conta_em_analise (test_comunicacao.TestOcorrencias.test_dashboard_da_coordenacao_conta_em_analise) ... ok
+test_duplicidade_no_mesmo_dia (test_comunicacao.TestOcorrencias.test_duplicidade_no_mesmo_dia) ... ok
+test_edicao_exclusao_e_filtros (test_comunicacao.TestOcorrencias.test_edicao_exclusao_e_filtros) ... ok
+test_fluxo_registro_analise_resolucao (test_comunicacao.TestOcorrencias.test_fluxo_registro_analise_resolucao) ... ok
+test_permissoes_e_escopo (test_comunicacao.TestOcorrencias.test_permissoes_e_escopo) ... ok
+test_validacoes (test_comunicacao.TestOcorrencias.test_validacoes) ... ok
+test_linha_acessa_por_nome_e_posicao (test_dialeto.TestConversaoDeTipos.test_linha_acessa_por_nome_e_posicao) ... ok
+test_tipos_do_postgres_viram_os_do_sqlite (test_dialeto.TestConversaoDeTipos.test_tipos_do_postgres_viram_os_do_sqlite) ... ok
+test_alias_camel_case_e_lastrowid (test_dialeto.TestPostgres.test_alias_camel_case_e_lastrowid) ... skipped 'defina EDUVANCE_TEST_PG_URL (e instale psycopg) para testar contra o PostgreSQL'
+test_migracao_sqlite_para_postgres_confere_contagens_e_sequencias (test_dialeto.TestPostgres.test_migracao_sqlite_para_postgres_confere_contagens_e_sequencias) ... skipped 'defina EDUVANCE_TEST_PG_URL (e instale psycopg) para testar contra o PostgreSQL'
+test_comparacao_com_nulo (test_dialeto.TestTraducao.test_comparacao_com_nulo) ... ok
+test_datas_relativas_ao_agora (test_dialeto.TestTraducao.test_datas_relativas_ao_agora) ... ok
+test_detecta_destino (test_dialeto.TestTraducao.test_detecta_destino) ... ok
+test_group_concat (test_dialeto.TestTraducao.test_group_concat) ... ok
+test_like_vira_ilike_para_manter_a_busca_sem_diferenciar_caixa (test_dialeto.TestTraducao.test_like_vira_ilike_para_manter_a_busca_sem_diferenciar_caixa) ... ok
+test_marcador_de_parametro (test_dialeto.TestTraducao.test_marcador_de_parametro) ... ok
+test_percentual_literal_e_escapado (test_dialeto.TestTraducao.test_percentual_literal_e_escapado) ... ok
+test_numero_de_processos_invalido (test_paralelo.PontoDeEntrada.test_numero_de_processos_invalido) ... Erro: o número de processos deve ser pelo menos 1
+ok
+test_raiz_e_a_do_repositorio_quando_nao_compilado (test_paralelo.PontoDeEntrada.test_raiz_e_a_do_repositorio_quando_nao_compilado) ... ok
+test_versao_informa_modo_de_execucao (test_paralelo.PontoDeEntrada.test_versao_informa_modo_de_execucao) ... ok
+test_benchmark_com_um_processo (test_paralelo.Processos.test_benchmark_com_um_processo) ... ok
+test_benchmark_em_varios_processos_confere_com_o_sequencial (test_paralelo.Processos.test_benchmark_em_varios_processos_confere_com_o_sequencial) ... ok
+test_lote_sintetico_e_deterministico (test_paralelo.Processos.test_lote_sintetico_e_deterministico) ... ok
+test_modo_sem_banco_usa_alunos_ficticios (test_paralelo.Processos.test_modo_sem_banco_usa_alunos_ficticios) ... ok
+test_resolver_processos (test_paralelo.Processos.test_resolver_processos) ... ok
+test_lote_do_banco_tem_um_documento_por_aluno (test_paralelo.RecalculoEmLote.test_lote_do_banco_tem_um_documento_por_aluno) ... ok
+test_recalculo_grava_e_paralelo_igual_ao_sequencial (test_paralelo.RecalculoEmLote.test_recalculo_grava_e_paralelo_igual_ao_sequencial) ... ok
+test_aluno_nao_ve_de_outro_aluno (test_recomendacao.TestPermissoes.test_aluno_nao_ve_de_outro_aluno) ... ok
+test_exige_autenticacao (test_recomendacao.TestPermissoes.test_exige_autenticacao) ... ok
+test_professor_so_ve_alunos_das_suas_turmas_e_coordenacao_ve_todos (test_recomendacao.TestPermissoes.test_professor_so_ve_alunos_das_suas_turmas_e_coordenacao_ve_todos) ... ok
+test_responsavel_so_ve_dos_filhos (test_recomendacao.TestPermissoes.test_responsavel_so_ve_dos_filhos) ... ok
+test_aluno_recebe_recomendacoes_com_contrato_completo (test_recomendacao.TestRecomendacoes.test_aluno_recebe_recomendacoes_com_contrato_completo) ... ok
+test_cruza_agenda_com_notas_no_texto_da_prova (test_recomendacao.TestRecomendacoes.test_cruza_agenda_com_notas_no_texto_da_prova) ... ok
+test_reforco_aparece_apos_nota_baixa (test_recomendacao.TestRecomendacoes.test_reforco_aparece_apos_nota_baixa)
+Integração Notas -> Recomendação: lançar uma nota baixa passa a gerar reforço na disciplina. ... ok
+test_resultado_e_persistido_sem_duplicar (test_recomendacao.TestRecomendacoes.test_resultado_e_persistido_sem_duplicar) ... ok
+test_resposta_fora_do_contrato_cai_no_motor (test_recomendacao.TestServicoHttp.test_resposta_fora_do_contrato_cai_no_motor) ... [2026-10-19 17:40:10,978] WARNING in recomendacao: Serviço de recomendação indisponível (resposta fora do contrato); usando o motor embutido.
+ok
+test_servico_fora_do_ar_cai_no_motor_embutido (test_recomendacao.TestServicoHttp.test_servico_fora_do_ar_cai_no_motor_embutido) ... [2026-10-19 17:40:11,151] WARNING in recomendacao: Serviço de recomendação indisponível (<urlopen error [Errno 111] Connection refused>); usando o motor embutido.
+ok
+test_usa_o_servico_e_envia_dados_dos_tres_modulos (test_recomendacao.TestServicoHttp.test_usa_o_servico_e_envia_dados_dos_tres_modulos) ... ok
+
+----------------------------------------------------------------------
+Ran 121 tests in 58.036s
+
+OK (skipped=2)

@@ -1,0 +1,58 @@
+=== Eduvance - compilacao com Nuitka === 
+Data: Mon 10/19/2026 17:24:35.74 
+Python 3.14.8
+Python de 64 bits, AMD64
+ 
+=== 1) npm run build === 
+
+> eduvance-frontend@0.3.0 build
+> node build.mjs
+
+
+  dist\app.js   371.6kb
+  dist\app.css   31.8kb
+
+Done in 57ms
+ 
+=== 2) ambiente de compilacao: Nuitka + dependencias === 
+4.3.1
+Update status: up to date with stable release '4.3.1' (cached, 47 minutes old).
+Commercial: None
+Python: 3.14.8 (tags/v3.14.8:8e6e75d, Sep 30 2026, 18:19:33) [MSC v.1944 64 bit (AMD64)]
+Flavor: CPython Official
+GIL: yes
+Executable: ~\Downloads\Eduvance\Eduvance\.venv-compilar\Scripts\python.exe
+OS: Windows
+Arch: x86_64
+WindowsRelease: 11
+Version C compiler: ~\AppData\Local\Nuitka\Nuitka\Cache\downloads\pip\private-49c291cb\Lib\site-packages\ziglang\zig.exe (zig.exe 0.16.0).
+ 
+=== 3) python -m nuitka --standalone --zig ... === 
+Nuitka-Options: Used command line options:
+Nuitka-Options:   --standalone --assume-yes-for-downloads --output-dir=C:\Users\Rafael\Downloads\Eduvance\Eduvance\compilado --output-filename=eduvance --include-package=app --include-module=recomendacao --include-module=recomendacao.motor --nofollow-import-to=recomendacao.servico --nofollow-import-to=recomendacao.tests --include-data-dir=..\database=database --include-data-dir=..\frontend\dist=frontend\dist --noinclude-data-files=database/*.db* --zig eduvance.py
+Nuitka: Starting Python compilation with:
+Nuitka:   Version '4.3.1' on Python 3.14 (flavor 'CPython Official') commercial grade 'not installed'.
+Nuitka: Completed Python level compilation and optimization.
+Nuitka: Generating source code for C backend compiler.
+Nuitka: Running data composer tool for optimal constant value handling.
+Nuitka: Running C compilation via Scons.
+Nuitka-Scons: Backend C compiler: ~\AppData\Local\Nuitka\Nuitka\Cache\downloads\pip\private-49c291cb\Lib\site-packages\ziglang\zig.exe (zig.exe 0.16.0).
+Nuitka-Scons: Backend C linking with 192 files (no progress information available for this stage).
+Nuitka-Options: Included data file 'database\schema.postgresql.sql' due to specified data dir '..\database' on command line.
+Nuitka-Options: Included data file 'database\schema.sql' due to specified data dir '..\database' on command line.
+Nuitka-Options: Included data file 'frontend\dist\app.css' due to specified data dir '..\frontend\dist' on command line.
+Nuitka-Options: Included data file 'frontend\dist\app.js' due to specified data dir '..\frontend\dist' on command line.
+Nuitka-Options: Included data file 'frontend\dist\favicon.svg' due to specified data dir '..\frontend\dist' on command line.
+Nuitka-Options: Included data file 'frontend\dist\index.html' due to specified data dir '..\frontend\dist' on command line.
+Nuitka: Keeping build directory 'C:\Users\Rafael\Downloads\Eduvance\Eduvance\compilado\eduvance.build'.
+Nuitka: Successfully created '~\Downloads\Eduvance\Eduvance\compilado\eduvance.dist\eduvance.exe'.
+ 
+codigo: COMPILACAO OK 
+eduvance.exe: 25294336 bytes 
+ 
+=== 4) executavel: --versao e --init-db === 
+Eduvance · execução: executável compilado (Nuitka) · Python 3.14.8 · pasta do projeto: C:\Users\Rafael\Downloads\Eduvance\Eduvance\compilado\eduvance.dist · processadores lógicos: 12
+• Tabelas criadas a partir de schema.sql
+• Dados de demonstração inseridos
+ 
+=== fim === 

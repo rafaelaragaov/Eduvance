@@ -1,0 +1,50 @@
+Processadores (threads lógicas) detectados: 12
+Processos usados no teste: 12 · duração alvo: 30 s · carga: 110 alunos (dados reais do banco)
+
+1/2  Medindo a velocidade de UM processo (2 s)...
+     1 processo faz 143.725 cálculos/s
+
+2/2  Rodando com 12 processo(s) por ~30 s (tarefas de ~0.5 s). Abra o Gerenciador de Tarefas > Desempenho.
+       1.0 s · 11 tarefas concluídas
+       2.0 s · 22 tarefas concluídas
+       3.0 s · 33 tarefas concluídas
+       4.0 s · 45 tarefas concluídas
+       5.0 s · 57 tarefas concluídas
+       6.0 s · 69 tarefas concluídas
+       7.0 s · 81 tarefas concluídas
+       8.0 s · 93 tarefas concluídas
+       9.1 s · 105 tarefas concluídas
+      10.2 s · 117 tarefas concluídas
+      11.2 s · 129 tarefas concluídas
+      12.2 s · 141 tarefas concluídas
+      13.3 s · 153 tarefas concluídas
+      14.0 s · 164 tarefas concluídas
+      15.0 s · 175 tarefas concluídas
+      16.0 s · 186 tarefas concluídas
+      17.0 s · 196 tarefas concluídas
+      18.0 s · 208 tarefas concluídas
+      19.0 s · 220 tarefas concluídas
+      20.0 s · 233 tarefas concluídas
+      21.0 s · 245 tarefas concluídas
+      22.0 s · 257 tarefas concluídas
+      23.1 s · 270 tarefas concluídas
+      24.1 s · 282 tarefas concluídas
+      25.1 s · 294 tarefas concluídas
+      26.0 s · 306 tarefas concluídas
+      27.0 s · 318 tarefas concluídas
+      28.0 s · 330 tarefas concluídas
+      29.0 s · 342 tarefas concluídas
+      30.0 s · 353 tarefas concluídas
+      31.0 s · 365 tarefas concluídas
+
+================  RESULTADO  ================
+Processos ................ 12 (processadores lógicos: 12)
+Duração .................. 31.74 s
+Cálculos realizados ...... 27.008.080
+Vazão com 1 processo ..... 143.725 cálculos/s
+Vazão com 12 processo(s) ... 850.899 cálculos/s
+Ganho (speedup) .......... 5.92x   (ideal: 12x)
+Eficiência ............... 49%
+Uso médio de CPU ......... 97%  (tempo de CPU dos processos / tempo decorrido x processos)
+Resultado idêntico ao sequencial: sim
+Data/hora: 2026-10-19 17:27:24

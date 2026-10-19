@@ -1,0 +1,9 @@
+Alunos processados ...... 110
+Processos de cálculo .... 12
+Recomendações geradas ... 112 (gravadas em recomendacao_ia)
+Leitura do banco ........ 0.033 s (processo principal)
+Cálculo em paralelo ..... 0.487 s
+Gravação no banco ....... 0.060 s (processo principal)
+Total ................... 0.582 s
+Obs.: com poucos alunos o cálculo leva milissegundos e o custo de criar processos domina;
+      o ganho de verdade aparece na carga de teste (--benchmark-paralelo).

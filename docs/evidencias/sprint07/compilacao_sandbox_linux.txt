@@ -1,0 +1,25 @@
+Compilação com Nuitka no ambiente de desenvolvimento (Linux; no PC do grupo o compilar.bat usa --zig no Windows)
+Comando:
+  python -m nuitka --standalone --output-filename=eduvance --include-package=app --include-module=recomendacao --include-module=recomendacao.motor \
+    --nofollow-import-to=recomendacao.servico --nofollow-import-to=recomendacao.tests --include-data-dir=../database=database \
+    --include-data-dir=../frontend/dist=frontend/dist --noinclude-data-files='database/*.db*' eduvance.py
+
+Nuitka-Options: Used command line options:
+Nuitka: Starting Python compilation with:
+Nuitka:   Version '4.4rc2' on Python 3.13 (flavor 'Debian Python') commercial grade 'not installed'.
+Nuitka-Plugins:anti-bloat: Not including '_json' automatically in order to avoid bloat, but this may cause: may slow down by using fallback implementation.
+Nuitka: Completed Python level compilation and optimization.
+Nuitka: Generating source code for C backend compiler.
+Nuitka: Running data composer tool for optimal constant value handling.
+Nuitka: Running C compilation via Scons.
+Nuitka-Scons: Backend C compiler: gcc (gcc 13).
+Nuitka-Scons: Backend C linking with 253 files (no progress information available for this stage).
+Nuitka-Scons:WARNING: You are not using ccache, re-compilation of identical code will be slower than necessary. Use your OS package manager to install it.
+Nuitka-Options: Included data file 'database/schema.postgresql.sql' due to specified data dir '../database' on command line.
+Nuitka-Options: Included data file 'database/schema.sql' due to specified data dir '../database' on command line.
+Nuitka-Options: Included data file 'frontend/dist/app.css' due to specified data dir '../frontend/dist' on command line.
+Nuitka-Options: Included data file 'frontend/dist/app.js' due to specified data dir '../frontend/dist' on command line.
+Nuitka-Options: Included data file 'frontend/dist/favicon.svg' due to specified data dir '../frontend/dist' on command line.
+Nuitka-Options: Included data file 'frontend/dist/index.html' due to specified data dir '../frontend/dist' on command line.
+Nuitka: Keeping build directory '<saida>/eduvance.build'.
+Nuitka: Successfully created '<saida>/eduvance.dist/eduvance'.

@@ -1,0 +1,34 @@
+Processadores (threads lógicas) detectados: 2
+Processos usados no teste: 2 · duração alvo: 15 s · carga: 110 alunos (dados reais do banco)
+
+1/2  Medindo a velocidade de UM processo (2 s)...
+     1 processo faz 65.083 cálculos/s
+
+2/2  Rodando com 2 processo(s) por ~15 s (tarefas de ~0.5 s). Abra o Gerenciador de Tarefas > Desempenho.
+       1.4 s · 5 tarefas concluídas
+       2.3 s · 9 tarefas concluídas
+       3.3 s · 13 tarefas concluídas
+       4.4 s · 17 tarefas concluídas
+       5.4 s · 21 tarefas concluídas
+       6.1 s · 24 tarefas concluídas
+       7.0 s · 28 tarefas concluídas
+       8.4 s · 33 tarefas concluídas
+       9.0 s · 36 tarefas concluídas
+      10.3 s · 40 tarefas concluídas
+      11.2 s · 44 tarefas concluídas
+      12.3 s · 48 tarefas concluídas
+      13.2 s · 52 tarefas concluídas
+      14.1 s · 56 tarefas concluídas
+      15.1 s · 60 tarefas concluídas
+
+================  RESULTADO  ================
+Processos ................ 2 (processadores lógicos: 2)
+Duração .................. 15.76 s
+Cálculos realizados ...... 2.051.280
+Vazão com 1 processo ..... 65.083 cálculos/s
+Vazão com 2 processo(s) ... 130.120 cálculos/s
+Ganho (speedup) .......... 2.00x   (ideal: 2x)
+Eficiência ............... 100%
+Uso médio de CPU ......... 98%  (tempo de CPU dos processos / tempo decorrido x processos)
+Resultado idêntico ao sequencial: sim
+Data/hora: 2026-10-19 17:37:25

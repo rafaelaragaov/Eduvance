@@ -1,0 +1,10 @@
+Comparação, no mesmo computador (ambiente de desenvolvimento, Linux, 2 processadores lógicos), de 1 processo executando o motor de recomendação:
+  código-fonte Python : 1 processo faz 115.224 cálculos/s
+  código-fonte Python : 1 processo faz 120.225 cálculos/s
+  código-fonte Python : 1 processo faz 111.339 cálculos/s
+  executável compilado: 1 processo faz 55.596 cálculos/s
+  executável compilado: 1 processo faz 63.483 cálculos/s
+  executável compilado: 1 processo faz 69.672 cálculos/s
+
+Conclusão: neste cálculo (muito texto e dicionários) o Nuitka NÃO acelerou o código; o ganho do projeto vem de entregar um binário
+compilado e de usar vários processos, não de a compilação, sozinha, deixar o Python mais rápido.

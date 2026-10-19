@@ -1,0 +1,21 @@
+== Executável compilado pelo Nuitka (ambiente de desenvolvimento: Linux, 2 processadores lógicos) ==
+$ ls -la eduvance
+-rwxr-xr-x 1 root root 35561217 Oct 19 17:36 eduvance
+$ du -sh .
+60M	.
+$ ./eduvance --versao
+Eduvance · execução: executável compilado (Nuitka) · Python 3.13.16 · pasta do projeto: /tmp/claude-0/nb/eduvance.dist · processadores lógicos: 2
+$ ./eduvance --init-db --reset
+• Tabelas criadas a partir de schema.sql
+• Dados de demonstração inseridos
+
+== Servidor do executável ==
+OK  Eduvance em http://localhost:5073  (banco: /tmp/claude-0/nb/eduvance.dist/database/eduvance.db)
+    servidor: waitress · 8 threads de atendimento · Ctrl+C para parar
+$ curl /api/health
+{"arquivo":"eduvance.db","banco":"SQLite","status":"ok","tabelas":31,"usuarios":119,"versao":"3.45.1"}
+
+GET / -> HTTP 200
+GET /app.js -> HTTP 200
+POST /api/auth/login -> HTTP 200
+200 requisições simultâneas (16 em paralelo): {200} 0.74 s
