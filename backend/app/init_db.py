@@ -21,8 +21,10 @@ def criar_banco(destino: str | None = None, reset: bool = False, com_dados: bool
     if eh_postgres(destino):
         return _criar_postgres(destino, reset, com_dados, schema if schema is not None else Config.DATABASE_SCHEMA)
     os.makedirs(os.path.dirname(os.path.abspath(destino)), exist_ok=True)
-    if reset and os.path.exists(destino):
-        os.remove(destino)
+    if reset:
+        for sufixo in ("", "-wal", "-shm"):  # -wal/-shm existem quando o banco está em modo WAL
+            if os.path.exists(destino + sufixo):
+                os.remove(destino + sufixo)
     if os.path.exists(destino):
         con = sqlite3.connect(destino)
         n = con.execute("SELECT COUNT(*) FROM sqlite_master WHERE name = 'usuario'").fetchone()[0]
@@ -36,6 +38,10 @@ def criar_banco(destino: str | None = None, reset: bool = False, com_dados: bool
         with open(Config.SCHEMA_SQL, encoding="utf-8") as f:
             con.executescript(f.read())
         print(f"• Tabelas criadas a partir de {os.path.basename(Config.SCHEMA_SQL)}")
+        try:  # modo WAL: leituras não bloqueiam gravações, o que importa quando várias threads atendem ao mesmo tempo
+            con.execute("PRAGMA journal_mode = WAL")
+        except sqlite3.DatabaseError:
+            pass  # sistema de arquivos sem suporte (ex.: pasta de rede): segue no modo padrão
         if com_dados:
             popular(con)
             print("• Dados de demonstração inseridos")

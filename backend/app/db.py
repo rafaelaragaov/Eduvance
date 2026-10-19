@@ -187,7 +187,7 @@ def conectar(destino: str, schema: str | None = None):
     """Abre a conexão: arquivo SQLite (com integridade referencial) ou URL do PostgreSQL."""
     if eh_postgres(destino):
         return ConexaoPG(destino, schema)
-    con = sqlite3.connect(destino)
+    con = sqlite3.connect(destino, timeout=15)  # com várias threads atendendo, espera o outro terminar de gravar em vez de falhar
     con.row_factory = sqlite3.Row
     con.execute("PRAGMA foreign_keys = ON")
     return con

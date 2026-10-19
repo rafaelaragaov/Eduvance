@@ -1,8 +1,12 @@
 """Configurações da aplicação (podem ser sobrescritas por variáveis de ambiente)."""
 import os
+import sys
 from pathlib import Path
 
-RAIZ = Path(__file__).resolve().parents[2]  # raiz do repositório
+# Raiz do projeto. Rodando como código-fonte é a raiz do repositório; no executável gerado pelo Nuitka (Sprint 07,
+# `compilar.bat`) é a pasta onde está o eduvance.exe, que leva ao lado `database/` e `frontend/dist/`.
+COMPILADO = "__compiled__" in globals()
+RAIZ = Path(sys.argv[0]).resolve().parent if COMPILADO else Path(__file__).resolve().parents[2]
 
 
 class Config:
